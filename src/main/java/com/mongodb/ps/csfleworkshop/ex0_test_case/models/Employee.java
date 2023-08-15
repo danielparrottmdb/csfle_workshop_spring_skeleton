@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.models;
+package com.mongodb.ps.csfleworkshop.ex0_test_case.models;
 
 import java.util.List;
 

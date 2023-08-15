@@ -19,6 +19,11 @@ Then you can run as a Spring Boot Application or just run the class `JavaSpringB
 mvn spring-boot:run
 ```
 
+To specify the exercise to run:
+```
+mvn spring-boot:run -Dspring-boot.run.arguments=--csfle.exercise=7
+```
+
 ### Generating a master key file
 
 A master key is required to wrap the Data Encryption Keys.  If trying this out using a file-based "local" KMS (**never use file-based KMS in production!!!**) you can generate a master key on a *nix system in the shell using:

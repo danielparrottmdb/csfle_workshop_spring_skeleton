@@ -17,6 +17,7 @@ import com.mongodb.ps.csfleworkshop.CsfleworkshopApplication;
 import org.bson.*;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -27,7 +28,8 @@ import java.security.SecureRandom;
 import java.util.*;
 
 @Service
-public class KeyGenerationServiceImpl implements KeyGenerationService {
+@Qualifier("localKms")
+public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
 
     String KMS_PROVIDER = "local";
     String MASTER_KEY_FILE_PATH = "./master-key.txt";
@@ -63,11 +65,11 @@ public class KeyGenerationServiceImpl implements KeyGenerationService {
         return kmsProviders;
     }
 
-    public UUID generateLocalKeyId(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders, String connectionString) {
-        return this.generateLocalKeyId(keyVaultNamespace, kmsProviders, connectionString, "demo-data-key");
+    public UUID generateKey(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders, String connectionString) {
+        return this.generateKey(keyVaultNamespace, kmsProviders, connectionString, "demo-data-key");
     }
 
-    public UUID generateLocalKeyId(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders, String connectionString, String keyAltName) {
+    public UUID generateKey(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders, String connectionString, String keyAltName) {
         createIndexOnKeyVaultCollection(connectionString);
 
         UUID dataKeyId = null;

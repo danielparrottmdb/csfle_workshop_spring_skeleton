@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.convert.encryption.MongoEncryptionC
 import org.springframework.data.mongodb.core.encryption.Encryption;
 import org.springframework.data.mongodb.core.encryption.EncryptionKeyResolver;
 import org.springframework.data.mongodb.core.encryption.MongoClientEncryption;
-import org.springframework.data.repository.support.Repositories;
+// import org.springframework.data.repository.support.Repositories;
 
 import com.mongodb.AutoEncryptionSettings;
 import com.mongodb.ClientEncryptionSettings;
@@ -25,12 +25,15 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
-import com.mongodb.ps.csfleworkshop.models.Employee;
-import com.mongodb.ps.csfleworkshop.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.repositories.EmployeeRepository;
+import com.mongodb.ps.csfleworkshop.ex0_test_case.TestCaseExercise;
+import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.UseCaseCompleteExercise;
+/*
+import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.Employee;
+import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.EmployeeName;
+import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.repositories.EmployeeRepository;
+ */
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -39,7 +42,7 @@ import org.bson.BsonBinary;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.UuidRepresentation;
-import org.bson.types.ObjectId;
+// import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 
 @SpringBootApplication
@@ -62,6 +65,11 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Value("${crypt.shared.lib.path}")
     private String CRYPT_SHARED_LIB_PATH;
 
+	@Value("${csfle.exercise}")
+	private int csfleExerciseNumber;
+
+	private CsfleExercise csfleExercise;
+
     private final KeyGenerationService keyGenerationService;
 	protected static Logger log = LoggerFactory.getLogger(CsfleworkshopApplication.class);
 
@@ -70,7 +78,10 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 	}
 
 	public static void main(String[] args) {
-		log.warn("Here we go...");
+		log.warn("Here we go... " + args.length);
+		for (String arg: args) {
+			log.warn("######### Arg: " + arg);
+		}
 		SpringApplication.run(CsfleworkshopApplication.class, args);
 	}
 
@@ -79,6 +90,9 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 		// Debugs don't log by default
 		log.debug("won't log");
 
+		CsfleExercise exercise = this.getExercise();
+		exercise.runExercise(appContext);
+		/*
 		Employee e = new Employee(new EmployeeName("Bugs", "Bunny"), "Shh it's a secret",
 			Arrays.asList("IC"), 78000.0);
 		EmployeeRepository employeeRepository = this.getEmployeeRepository();
@@ -86,13 +100,17 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 		log.info("eId: " + eId);
 		Employee e2 = employeeRepository.findById(eId.toString()).get();
 		log.info("e2: " + e2 + ";" + e2.getSalary());
+		 */
 	}
 
+	/*
+	 * 
 	public EmployeeRepository getEmployeeRepository() {
 		Repositories repos = new Repositories(appContext);
 		EmployeeRepository repo = (EmployeeRepository) repos.getRepositoryFor(Employee.class).get();
 		return repo;
 	}
+	 */
 
 	// @Override
 	public String getDatabaseName() {
@@ -102,17 +120,18 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Bean
     public MongoClient mongoClient() {
 
-        log.info("Getting MongoClient");
+        log.info("Getting MongoClient; exercise: " + csfleExerciseNumber);
 
         final Map<String, Map<String, Object>> kmsProviders = keyGenerationService.getKmsProviders();
 
         // This key is unused locally but ensures the second-data-key used for explicit encryption exists 
-        keyGenerationService.generateLocalKeyId(KEY_VAULT_NAMESPACE, kmsProviders, connectionString, "second-data-key");
+        keyGenerationService.generateKey(KEY_VAULT_NAMESPACE, kmsProviders, connectionString, "second-data-key");
 
-        final UUID dataKey1 = keyGenerationService.generateLocalKeyId(KEY_VAULT_NAMESPACE, kmsProviders, connectionString);
+        final UUID dataKey1 = keyGenerationService.generateKey(KEY_VAULT_NAMESPACE, kmsProviders, connectionString);
 
 		// Get schema map
-		BsonDocument schema = this.getSchemaDocument(dataKey1);
+		CsfleExercise exercise = this.getExercise();
+		BsonDocument schema = exercise.getSchemaDocument(dataKey1);
 		Map<String, BsonDocument> schemaMap = new HashMap<String, BsonDocument>();
 		schemaMap.put(encryptedDbName + "." + encryptedCollName, schema);
 
@@ -134,6 +153,23 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         MongoClient client = MongoClients.create(clientSettings);
         return client;
     }
+
+	public CsfleExercise getExercise() {
+		if (csfleExercise == null) {
+			switch (csfleExerciseNumber) {
+				case 0:
+					csfleExercise = new TestCaseExercise();
+					break;
+				case 7:
+					csfleExercise = new UseCaseCompleteExercise();
+					break;
+				default:
+					throw new UnsupportedOperationException("Unknown exercise " + csfleExerciseNumber);
+			}
+		}
+
+		return csfleExercise;
+	}
 
     public BsonDocument getSchemaDocument(UUID dekUuid) {
         String schemaJson = """

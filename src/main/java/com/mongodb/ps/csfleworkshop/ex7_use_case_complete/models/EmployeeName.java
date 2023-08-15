@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.models;
+package com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models;
 
 public class EmployeeName {
 
