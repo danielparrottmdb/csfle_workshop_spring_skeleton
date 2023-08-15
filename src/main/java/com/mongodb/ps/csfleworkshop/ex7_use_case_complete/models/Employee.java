@@ -1,20 +1,18 @@
 package com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models;
 
+import java.time.LocalDate;
 import java.util.List;
 
-import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.EncryptionAlgorithms;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("employees")
 public class Employee {
 
     @Id
-    private ObjectId id;
+    private String id;
 
     //private String firstName;
 
@@ -22,25 +20,31 @@ public class Employee {
 
     private EmployeeName name;
 
+    private EmployeeAddress address;
+
     private List<String> role;
+
+    private LocalDate dob;
+    private String phoneNumber;
+    private double salary;
 
     @Indexed(unique = true)
     @Field
     private String taxIdentifier;
 
-    // This is set up for manual, random encryption
-    @Field
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "second-data-key")
-    private double salary;
-
     public Employee() {
     }
 
-    public Employee(EmployeeName name, String taxIdentifier, List<String> role, double salary) {
+    public Employee(String id, EmployeeName name, EmployeeAddress address, List<String> role, LocalDate dob,
+            String phoneNumber, double salary, String taxIdentifier) {
+        this.id = id;        
         this.name = name;
+        this.address = address;
         this.role = role;
-        this.taxIdentifier = taxIdentifier;
+        this.dob = dob;
+        this.phoneNumber = phoneNumber;
         this.salary = salary;
+        this.taxIdentifier = taxIdentifier;
     }
 
     public EmployeeName getName() {
@@ -51,6 +55,13 @@ public class Employee {
         this.name = name;
     }
 
+    public EmployeeAddress getAddress() {
+        return address;
+    }
+
+    public void setAddress(EmployeeAddress address) {
+        this.address = address;
+    }
     /*
     public Employee(String firstName, String lastName, String taxIdentifier, List<String> role) {
         this.firstName = firstName;
@@ -77,12 +88,28 @@ public class Employee {
      */
 
 
-    public ObjectId getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(ObjectId id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDate getDob() {
+        return dob;
+    }
+
+    public void setDob(LocalDate dob) {
+        this.dob = dob;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getTaxIdentifier() {

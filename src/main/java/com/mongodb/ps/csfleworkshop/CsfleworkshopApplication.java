@@ -54,7 +54,7 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     public static final String KEY_VAULT_DB = "encryptionVault";
     public static final String KEY_VAULT_COLL = "keyVault";
 
-    private static final String KEY_VAULT_NAMESPACE = KEY_VAULT_DB + "." + KEY_VAULT_COLL;
+    public static final String KEY_VAULT_NAMESPACE = KEY_VAULT_DB + "." + KEY_VAULT_COLL;
 
     @Value("${spring.data.mongodb.uri}")
     private String connectionString;
