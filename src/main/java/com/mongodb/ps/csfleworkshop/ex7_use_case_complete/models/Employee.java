@@ -14,10 +14,6 @@ public class Employee {
     @Id
     private String id;
 
-    //private String firstName;
-
-    //private String lastName;
-
     private EmployeeName name;
 
     private EmployeeAddress address;
@@ -37,7 +33,7 @@ public class Employee {
 
     public Employee(String id, EmployeeName name, EmployeeAddress address, List<String> role, LocalDate dob,
             String phoneNumber, double salary, String taxIdentifier) {
-        this.id = id;        
+        this.id = id;
         this.name = name;
         this.address = address;
         this.role = role;
@@ -62,31 +58,6 @@ public class Employee {
     public void setAddress(EmployeeAddress address) {
         this.address = address;
     }
-    /*
-    public Employee(String firstName, String lastName, String taxIdentifier, List<String> role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.taxIdentifier = taxIdentifier;
-        this.role = role;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-     */
-
 
     public String getId() {
         return id;
@@ -127,6 +98,7 @@ public class Employee {
     public void setRole(List<String> role) {
         this.role = role;
     }
+
     public double getSalary() {
         return salary;
     }

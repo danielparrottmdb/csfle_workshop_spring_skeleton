@@ -15,7 +15,6 @@ import org.springframework.data.mongodb.core.convert.encryption.MongoEncryptionC
 import org.springframework.data.mongodb.core.encryption.Encryption;
 import org.springframework.data.mongodb.core.encryption.EncryptionKeyResolver;
 import org.springframework.data.mongodb.core.encryption.MongoClientEncryption;
-// import org.springframework.data.repository.support.Repositories;
 
 import com.mongodb.AutoEncryptionSettings;
 import com.mongodb.ClientEncryptionSettings;
@@ -27,11 +26,6 @@ import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
 import com.mongodb.ps.csfleworkshop.ex0_test_case.TestCaseExercise;
 import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.UseCaseCompleteExercise;
-/*
-import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.Employee;
-import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.repositories.EmployeeRepository;
- */
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 import java.util.HashMap;
@@ -42,7 +36,7 @@ import org.bson.BsonBinary;
 import org.bson.BsonDocument;
 import org.bson.BsonValue;
 import org.bson.UuidRepresentation;
-// import org.bson.types.ObjectId;
+
 import org.slf4j.Logger;
 
 @SpringBootApplication
@@ -67,75 +61,58 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Value("${crypt.shared.lib.path}")
     private String CRYPT_SHARED_LIB_PATH;
 
-	@Value("${csfle.exercise}")
-	private int csfleExerciseNumber;
+    @Value("${csfle.exercise}")
+    private int csfleExerciseNumber;
 
-	private CsfleExercise csfleExercise;
+    private CsfleExercise csfleExercise;
 
     private final KeyGenerationService keyGenerationService;
-	protected static Logger log = LoggerFactory.getLogger(CsfleworkshopApplication.class);
+    protected static Logger log = LoggerFactory.getLogger(CsfleworkshopApplication.class);
 
-	public CsfleworkshopApplication(KeyGenerationService keyGenerationService) {
-		this.keyGenerationService = keyGenerationService;
-	}
+    public CsfleworkshopApplication(KeyGenerationService keyGenerationService) {
+        this.keyGenerationService = keyGenerationService;
+    }
 
-	public static void main(String[] args) {
-		log.warn("Here we go... " + args.length);
-		for (String arg: args) {
-			log.warn("######### Arg: " + arg);
-		}
-		SpringApplication.run(CsfleworkshopApplication.class, args);
-	}
+    public static void main(String[] args) {
+        log.warn("Here we go... " + args.length);
+        for (String arg : args) {
+            log.warn("######### Arg: " + arg);
+        }
+        SpringApplication.run(CsfleworkshopApplication.class, args);
+    }
 
-	public void run (String... args) {
-		log.info("Running CsfleworkshopApplication CLI");
-		// Debugs don't log by default
-		log.debug("won't log");
+    public void run(String... args) {
+        log.info("Running CsfleworkshopApplication CLI");
+        // NB - Debugs don't log by default
+        log.debug("won't log");
 
-		CsfleExercise exercise = this.getExercise();
-		exercise.runExercise(appContext);
-		/*
-		Employee e = new Employee(new EmployeeName("Bugs", "Bunny"), "Shh it's a secret",
-			Arrays.asList("IC"), 78000.0);
-		EmployeeRepository employeeRepository = this.getEmployeeRepository();
-		ObjectId eId = employeeRepository.insert(e).getId();
-		log.info("eId: " + eId);
-		Employee e2 = employeeRepository.findById(eId.toString()).get();
-		log.info("e2: " + e2 + ";" + e2.getSalary());
-		 */
-	}
+        CsfleExercise exercise = this.getExercise();
+        exercise.runExercise(appContext);
+    }
 
-	/*
-	 * 
-	public EmployeeRepository getEmployeeRepository() {
-		Repositories repos = new Repositories(appContext);
-		EmployeeRepository repo = (EmployeeRepository) repos.getRepositoryFor(Employee.class).get();
-		return repo;
-	}
-	 */
-
-	// @Override
-	public String getDatabaseName() {
-		return encryptedDbName;
-	}
+    // @Override
+    public String getDatabaseName() {
+        return encryptedDbName;
+    }
 
     @Bean
     public MongoClient mongoClient() {
 
         log.info("Getting MongoClient; exercise: " + csfleExerciseNumber);
 
-
-        // This key is unused locally but ensures the second-data-key used for explicit encryption exists 
+        // This key is unused locally but ensures the second-data-key used for explicit
+        // encryption exists
         keyGenerationService.generateKey("second-data-key");
         final UUID dataKey1 = keyGenerationService.generateKey();
 
-		// Get schema map
-		CsfleExercise exercise = this.getExercise();
-		BsonDocument schema = exercise.getSchemaDocument(dataKey1);
-		Map<String, BsonDocument> schemaMap = new HashMap<String, BsonDocument>();
-		schemaMap.put(encryptedDbName + "." + encryptedCollName, schema);
+        // Get schema map
+        CsfleExercise exercise = this.getExercise();
+        BsonDocument schema = exercise.getSchemaDocument(dataKey1);
+        Map<String, BsonDocument> schemaMap = new HashMap<String, BsonDocument>();
+        schemaMap.put(encryptedDbName + "." + encryptedCollName, schema);
 
         Map<String, Object> extraOptions = new HashMap<String, Object>();
+        // For using CRYPT_SHARED:
         // extraOptions.put("cryptSharedLibPath", CRYPT_SHARED_LIB_PATH);
         // extraOptions.put("cryptSharedLibRequired", true);
         extraOptions.put("mongocryptdBypassSpawn", true);
@@ -145,8 +122,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                 .applyConnectionString(new ConnectionString(connectionString))
                 .autoEncryptionSettings(AutoEncryptionSettings.builder()
                         .keyVaultMongoClientSettings(MongoClientSettings.builder()
-                            .applyConnectionString(new ConnectionString(keyVaultConnectionString))
-                            .build())
+                                .applyConnectionString(new ConnectionString(keyVaultConnectionString))
+                                .build())
                         .keyVaultNamespace(keyVaultNamespace)
                         .kmsProviders(keyGenerationService.getKmsProviders())
                         .schemaMap(schemaMap)
@@ -158,84 +135,85 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return client;
     }
 
-	public CsfleExercise getExercise() {
-		if (csfleExercise == null) {
-			switch (csfleExerciseNumber) {
-				case 0:
-					csfleExercise = new TestCaseExercise();
-					break;
-				case 7:
-					csfleExercise = new UseCaseCompleteExercise();
-					break;
-				default:
-					throw new UnsupportedOperationException("Unknown exercise " + csfleExerciseNumber);
-			}
-		}
+    public CsfleExercise getExercise() {
+        if (csfleExercise == null) {
+            switch (csfleExerciseNumber) {
+                case 0:
+                    csfleExercise = new TestCaseExercise();
+                    break;
+                case 7:
+                    csfleExercise = new UseCaseCompleteExercise();
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Unknown exercise " + csfleExerciseNumber);
+            }
+        }
 
-		return csfleExercise;
-	}
+        return csfleExercise;
+    }
 
+    /*
+     * 
     public BsonDocument getSchemaDocument(UUID dekUuid) {
         String schemaJson = """
-{
-    "bsonType" : "object",
-    "encryptMetadata" : {
-        "keyId" : [
-        UUID("%s") 
-        ],
-        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-    },
-	"properties" : {
-		"name": {
-			"bsonType": "object",
-			"properties" : {
-				"firstName" : {
-					"encrypt" : {
-						"bsonType" : "string",
-						"algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-					}
-				},
-				"lastName" : {
-					"encrypt" : {
-						"bsonType" : "string",
-						"algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-					}
-				}
-			}
-		},
-		"taxIdentifier" : {
-			"encrypt" : {
-				"bsonType" : "string"
-			}
-		}
-	}
-}
-        """.formatted(dekUuid);
+                {
+                    "bsonType" : "object",
+                    "encryptMetadata" : {
+                        "keyId" : [
+                        UUID("%s")
+                        ],
+                        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
+                    },
+                	"properties" : {
+                		"name": {
+                			"bsonType": "object",
+                			"properties" : {
+                				"firstName" : {
+                					"encrypt" : {
+                						"bsonType" : "string",
+                						"algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                					}
+                				},
+                				"lastName" : {
+                					"encrypt" : {
+                						"bsonType" : "string",
+                						"algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
+                					}
+                				}
+                			}
+                		},
+                		"taxIdentifier" : {
+                			"encrypt" : {
+                				"bsonType" : "string"
+                			}
+                		}
+                	}
+                }
+                        """.formatted(dekUuid);
         BsonDocument schemaBsonDoc = BsonDocument.parse(schemaJson);
         return schemaBsonDoc;
     }
+     */
 
     @Bean
     ClientEncryption clientEncryption() {
         ClientEncryptionSettings encryptionSettings = ClientEncryptionSettings.builder()
-            .keyVaultNamespace(keyVaultDb + "." + keyVaultColl)
-            .kmsProviders(keyGenerationService.getKmsProviders())
-            .keyVaultMongoClientSettings(MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(connectionString))
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .build()
-            )
-            .build();
-        
-        return ClientEncryptions.create(encryptionSettings);    
+                .keyVaultNamespace(keyVaultDb + "." + keyVaultColl)
+                .kmsProviders(keyGenerationService.getKmsProviders())
+                .keyVaultMongoClientSettings(MongoClientSettings.builder()
+                        .applyConnectionString(new ConnectionString(connectionString))
+                        .uuidRepresentation(UuidRepresentation.STANDARD)
+                        .build())
+                .build();
+
+        return ClientEncryptions.create(encryptionSettings);
     }
 
     @Bean
     MongoEncryptionConverter mongoEncrpytionConverter(ClientEncryption clientEncryption) {
         Encryption<BsonValue, BsonBinary> encryption = MongoClientEncryption.just(clientEncryption);
-        EncryptionKeyResolver keyResolver = EncryptionKeyResolver.annotated((ctx) -> null);             
-
-        return new MongoEncryptionConverter(encryption, keyResolver);  
+        EncryptionKeyResolver keyResolver = EncryptionKeyResolver.annotated((ctx) -> null);
+        return new MongoEncryptionConverter(encryption, keyResolver);
     }
 
     /*
@@ -244,82 +222,6 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Override
     protected void configureConverters(MongoConverterConfigurationAdapter adapter) {
         adapter.registerPropertyValueConverterFactory(
-            PropertyValueConverterFactory.beanFactoryAware(appContext)
-        );
+                PropertyValueConverterFactory.beanFactoryAware(appContext));
     }
-
-
-	/**
-	 * Get the schema document.
-	 * 
-	 * This gets the full document that will be used once the employee gets fully populated.
-	 * @param dekUuid
-	 * @return
-	 */
-    public BsonDocument _getSchemaDocument(UUID dekUuid) {
-        String schemaJson = """
-{
-    "bsonType" : "object",
-    "encryptMetadata" : {
-        "keyId" : [
-        UUID("%s") 
-        ],
-        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-    },
-    "properties" : {
-        "name" : {
-    "bsonType": "object",
-        "properties" : {
-        "firstName" : {
-            "encrypt" : {
-            "bsonType" : "string",
-            "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }
-        },
-        "lastName" : {
-            "encrypt" : {
-            "bsonType" : "string",
-            "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-        }
-        },
-        "otherNames" : {
-            "encrypt" : {
-            "bsonType" : "string",
-        }
-        }
-        }
-    },
-        "address" : {
-            "encrypt" : {
-                "bsonType" : "object"
-            }
-        },
-        "dob" : {
-            "encrypt" : {
-                "bsonType" : "date"
-            }
-        },
-        "phoneNumber" : {
-        "encrypt" : {
-            "bsonType" : "string"
-        }
-        },
-        "salary" : {
-        "encrypt" : {
-            "bsonType" : "double"
-        }
-        },
-        "taxIdentifier" : {
-        "encrypt" : {
-            "bsonType" : "string"
-        }
-        }
-    }
-}
-        """.formatted(dekUuid);
-        BsonDocument schemaBsonDoc = BsonDocument.parse(schemaJson);
-        return schemaBsonDoc;
-    }
-
-
 }

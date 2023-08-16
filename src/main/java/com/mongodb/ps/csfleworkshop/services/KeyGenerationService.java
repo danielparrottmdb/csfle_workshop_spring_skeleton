@@ -5,11 +5,11 @@ import java.util.UUID;
 
 public interface KeyGenerationService {
 
-    // void generateLocalMasterKey() throws IOException;
-
     Map<String, Map<String, Object>> getKmsProviders();
 
     UUID generateKey();
 
     UUID generateKey(String keyAltName);
+
+    public void deleteKey(String keyAltName);
 }
