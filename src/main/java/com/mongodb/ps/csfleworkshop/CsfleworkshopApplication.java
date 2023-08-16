@@ -51,10 +51,12 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Autowired
     ApplicationContext appContext;
 
-    public static final String KEY_VAULT_DB = "encryptionVault";
-    public static final String KEY_VAULT_COLL = "keyVault";
-
-    public static final String KEY_VAULT_NAMESPACE = KEY_VAULT_DB + "." + KEY_VAULT_COLL;
+    @Value("${spring.data.mongodb.keyvault.uri}")
+    private String keyVaultConnectionString;
+    @Value("${spring.data.mongodb.keyvault.database}")
+    public String keyVaultDb = "encryptionVault";
+    @Value("${spring.data.mongodb.keyvault.collection}")
+    public String keyVaultColl = "keyVault";
 
     @Value("${spring.data.mongodb.uri}")
     private String connectionString;
@@ -122,12 +124,10 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 
         log.info("Getting MongoClient; exercise: " + csfleExerciseNumber);
 
-        final Map<String, Map<String, Object>> kmsProviders = keyGenerationService.getKmsProviders();
 
         // This key is unused locally but ensures the second-data-key used for explicit encryption exists 
-        keyGenerationService.generateKey(KEY_VAULT_NAMESPACE, kmsProviders, connectionString, "second-data-key");
-
-        final UUID dataKey1 = keyGenerationService.generateKey(KEY_VAULT_NAMESPACE, kmsProviders, connectionString);
+        keyGenerationService.generateKey("second-data-key");
+        final UUID dataKey1 = keyGenerationService.generateKey();
 
 		// Get schema map
 		CsfleExercise exercise = this.getExercise();
@@ -140,11 +140,15 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         // extraOptions.put("cryptSharedLibRequired", true);
         extraOptions.put("mongocryptdBypassSpawn", true);
 
+        String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
         MongoClientSettings clientSettings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))
                 .autoEncryptionSettings(AutoEncryptionSettings.builder()
-                        .keyVaultNamespace(KEY_VAULT_NAMESPACE)
-                        .kmsProviders(kmsProviders)
+                        .keyVaultMongoClientSettings(MongoClientSettings.builder()
+                            .applyConnectionString(new ConnectionString(keyVaultConnectionString))
+                            .build())
+                        .keyVaultNamespace(keyVaultNamespace)
+                        .kmsProviders(keyGenerationService.getKmsProviders())
                         .schemaMap(schemaMap)
                         .extraOptions(extraOptions)
                         .build())
@@ -214,7 +218,7 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Bean
     ClientEncryption clientEncryption() {
         ClientEncryptionSettings encryptionSettings = ClientEncryptionSettings.builder()
-            .keyVaultNamespace(KEY_VAULT_DB + "." + KEY_VAULT_COLL)
+            .keyVaultNamespace(keyVaultDb + "." + keyVaultColl)
             .kmsProviders(keyGenerationService.getKmsProviders())
             .keyVaultMongoClientSettings(MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))

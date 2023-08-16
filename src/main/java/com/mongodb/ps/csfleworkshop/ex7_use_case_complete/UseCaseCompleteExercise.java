@@ -3,7 +3,6 @@ package com.mongodb.ps.csfleworkshop.ex7_use_case_complete;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -11,11 +10,11 @@ import org.bson.BsonDocument;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.env.Environment;
 import org.springframework.data.repository.support.Repositories;
 
 import com.github.javafaker.Faker;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
-import com.mongodb.ps.csfleworkshop.CsfleworkshopApplication;
 import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.Employee;
 import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.EmployeeAddress;
 import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models.EmployeeName;
@@ -38,6 +37,14 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 
 	public String getConnectionString(ApplicationContext applicationContext) {
 		return applicationContext.getEnvironment().getProperty("spring.data.mongodb.uri");
+	}
+
+	public String getKeyVaultNamespace(ApplicationContext applicationContext) {
+
+		Environment environment = applicationContext.getEnvironment();
+		String kvDatabase = environment.getProperty("spring.data.mongodb.keyvault.database");
+		String kvCollection = environment.getProperty("spring.data.mongodb.keyvault.collection");
+		return  kvDatabase + "." +  kvCollection;
 	}
 
     @Override
@@ -70,16 +77,24 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 
 		// Now make sure an encryption key for the employee exists
 		KeyGenerationService keyGenerationService = this.getKeyGenerationService(appContext);
-        final Map<String, Map<String, Object>> kmsProviders = keyGenerationService.getKmsProviders();
-        // This key is unused locally but ensures the second-data-key used for explicit encryption exists 
-        final UUID employeeDEKId = keyGenerationService.generateKey(CsfleworkshopApplication.KEY_VAULT_NAMESPACE, kmsProviders, this.getConnectionString(appContext), employeeId);
+        // This key is unused locally but ensures the employee DEK exists 
+        final UUID employeeDEKId = keyGenerationService.generateKey(employeeId);
 		log.info("employeeDEKId: " + employeeDEKId);
 
+		// Insert the employee doc
 		EmployeeRepository7 employeeRepository = this.getEmployeeRepository(appContext);
 		String eId = employeeRepository.insert(e).getId();
 		log.info("eId: " + eId);
-		Employee e2 = employeeRepository.findById(eId.toString()).get();
+
+		// Find using the deterministically encrypted first and last names
+		// Employee e2 = employeeRepository.findById(eId.toString()).get();
+		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
+		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
 		log.info("e2: " + e2 + ";" + e2.getSalary());
+
+		// Delete the key and find again - will it work?
+
+		// Now sleep for 60 seconds and find again - will it work this time?
     }
 
     @Override

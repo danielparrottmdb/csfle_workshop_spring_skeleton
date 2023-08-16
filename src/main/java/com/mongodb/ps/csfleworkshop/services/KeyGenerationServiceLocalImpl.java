@@ -18,6 +18,7 @@ import org.bson.*;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -33,6 +34,14 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
 
     String KMS_PROVIDER = "local";
     String MASTER_KEY_FILE_PATH = "./master-key.txt";
+
+
+    @Value("${spring.data.mongodb.keyvault.uri}")
+    public String connectionString;
+    @Value("${spring.data.mongodb.keyvault.database}")
+    public String keyVaultDb;
+    @Value("${spring.data.mongodb.keyvault.collection}")
+    public String keyVaultColl;
 
     /**
      * Generate a local master key. In production scenarios, use a key management service
@@ -65,17 +74,17 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
         return kmsProviders;
     }
 
-    public UUID generateKey(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders, String connectionString) {
-        return this.generateKey(keyVaultNamespace, kmsProviders, connectionString, "demo-data-key");
+    public UUID generateKey() {
+        return this.generateKey("demo-data-key");
     }
 
-    public UUID generateKey(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders, String connectionString, String keyAltName) {
-        createIndexOnKeyVaultCollection(connectionString);
+    public UUID generateKey(String keyAltName) {
+        createIndexOnKeyVaultCollection();
 
         UUID dataKeyId = null;
         // find the key
         MongoClient keyVaultClient = MongoClients.create(connectionString);
-        MongoCollection<Document> keyVaultCollection = keyVaultClient.getDatabase(CsfleworkshopApplication.KEY_VAULT_DB).getCollection(CsfleworkshopApplication.KEY_VAULT_COLL);
+        MongoCollection<Document> keyVaultCollection = keyVaultClient.getDatabase(keyVaultDb).getCollection(keyVaultColl);
         Bson byKeyAltName = Filters.eq("keyAltNames", keyAltName);
         FindIterable<Document> keyDocs = keyVaultCollection.find(byKeyAltName);
         if (keyDocs.iterator().hasNext()) {
@@ -85,7 +94,12 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
         } else {
             // If not present then create a new one 
             MongoClientSettings mcs = MongoClientSettings.builder().applyConnectionString(new ConnectionString(connectionString)).build();
-            ClientEncryptionSettings clientEncryptionSettings = ClientEncryptionSettings.builder().keyVaultMongoClientSettings(mcs).keyVaultNamespace(keyVaultNamespace).kmsProviders(kmsProviders).build();
+            String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
+            ClientEncryptionSettings clientEncryptionSettings = ClientEncryptionSettings.builder()
+                    .keyVaultMongoClientSettings(mcs)
+                    .keyVaultNamespace(keyVaultNamespace)
+                    .kmsProviders(this.getKmsProviders())
+                    .build();
             ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
             List<String> keyAltNames = new ArrayList<>();
             keyAltNames.add(keyAltName);
@@ -115,11 +129,11 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
         return new UUID(high, low); 
     }
 
-    private void createIndexOnKeyVaultCollection(String connectionString) {
+    private void createIndexOnKeyVaultCollection() {
         MongoClient keyVaultClient = MongoClients.create(connectionString);
         //keyVaultClient.getDatabase(KEY_VAULT_DB).getCollection(KEY_VAULT_COLL).drop();
         // keyVaultClient.getDatabase(<<DB Name>>).getCollection(<<Collection>>).drop();
-        MongoCollection<Document> keyVaultCollection = keyVaultClient.getDatabase(CsfleworkshopApplication.KEY_VAULT_DB).getCollection(CsfleworkshopApplication.KEY_VAULT_COLL);
+        MongoCollection<Document> keyVaultCollection = keyVaultClient.getDatabase(keyVaultDb).getCollection(keyVaultColl);
         IndexOptions indexOpts = new IndexOptions().partialFilterExpression(new BsonDocument("keyAltNames", new BsonDocument("$exists", new BsonBoolean(true)))).unique(true);
         keyVaultCollection.createIndex(new BsonDocument("keyAltNames", new BsonInt32(1)), indexOpts);
         keyVaultClient.close();

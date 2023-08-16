@@ -9,9 +9,7 @@ public interface KeyGenerationService {
 
     Map<String, Map<String, Object>> getKmsProviders();
 
-    UUID generateKey(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders,
-                                     String connectionString);
+    UUID generateKey();
 
-    UUID generateKey(String keyVaultNamespace, Map<String, Map<String, Object>> kmsProviders,
-                                     String connectionString, String keyAltName);
+    UUID generateKey(String keyAltName);
 }
