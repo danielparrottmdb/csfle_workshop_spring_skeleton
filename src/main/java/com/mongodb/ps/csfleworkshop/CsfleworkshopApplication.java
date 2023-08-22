@@ -25,7 +25,9 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
 import com.mongodb.ps.csfleworkshop.ex0_test_case.TestCaseExercise;
-import com.mongodb.ps.csfleworkshop.ex7_use_case_complete.UseCaseCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex3_manual_complete.ManualCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex7_auto_complete.AutoCompleteExercise;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 import java.util.HashMap;
@@ -87,7 +89,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         log.debug("won't log");
 
         CsfleExercise exercise = this.getExercise();
-        exercise.runExercise(appContext);
+        //exercise.runExercise(appContext);
+        exercise.runExercise();
     }
 
     // @Override
@@ -118,18 +121,25 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         extraOptions.put("mongocryptdBypassSpawn", true);
 
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
-        MongoClientSettings clientSettings = MongoClientSettings.builder()
-                .applyConnectionString(new ConnectionString(connectionString))
-                .autoEncryptionSettings(AutoEncryptionSettings.builder()
-                        .keyVaultMongoClientSettings(MongoClientSettings.builder()
-                                .applyConnectionString(new ConnectionString(keyVaultConnectionString))
-                                .build())
-                        .keyVaultNamespace(keyVaultNamespace)
-                        .kmsProviders(keyGenerationService.getKmsProviders())
-                        .schemaMap(schemaMap)
-                        .extraOptions(extraOptions)
-                        .build())
-                .build();
+
+        MongoClientSettings.Builder mongoClientSettingsBuilder = MongoClientSettings.builder()
+                .applyConnectionString(new ConnectionString(connectionString));
+        
+        // MongoClientSettings clientSettings = MongoClientSettings.builder()
+        //         .applyConnectionString(new ConnectionString(connectionString))
+        if (exercise.useAutoEncryption()) {
+            mongoClientSettingsBuilder.autoEncryptionSettings(AutoEncryptionSettings.builder()
+                    .keyVaultMongoClientSettings(MongoClientSettings.builder()
+                            .applyConnectionString(new ConnectionString(keyVaultConnectionString))
+                            .build())
+                    .keyVaultNamespace(keyVaultNamespace)
+                    .kmsProviders(keyGenerationService.getKmsProviders())
+                    .schemaMap(schemaMap)
+                    .extraOptions(extraOptions)
+                    .build());
+        }
+
+        MongoClientSettings clientSettings = mongoClientSettingsBuilder.build();
 
         MongoClient client = MongoClients.create(clientSettings);
         return client;
@@ -139,10 +149,16 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         if (csfleExercise == null) {
             switch (csfleExerciseNumber) {
                 case 0:
-                    csfleExercise = new TestCaseExercise();
+                    csfleExercise = new TestCaseExercise(appContext);
+                    break;
+                case 3:
+                    csfleExercise = new ManualCompleteExercise(appContext);
                     break;
                 case 7:
-                    csfleExercise = new UseCaseCompleteExercise();
+                    csfleExercise = new AutoCompleteExercise(appContext);
+                    break;   
+                case 11:
+                    csfleExercise = new UseCaseCompleteExercise(appContext);
                     break;
                 default:
                     throw new UnsupportedOperationException("Unknown exercise " + csfleExerciseNumber);
@@ -151,49 +167,6 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 
         return csfleExercise;
     }
-
-    /*
-     * 
-    public BsonDocument getSchemaDocument(UUID dekUuid) {
-        String schemaJson = """
-                {
-                    "bsonType" : "object",
-                    "encryptMetadata" : {
-                        "keyId" : [
-                        UUID("%s")
-                        ],
-                        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
-                    },
-                	"properties" : {
-                		"name": {
-                			"bsonType": "object",
-                			"properties" : {
-                				"firstName" : {
-                					"encrypt" : {
-                						"bsonType" : "string",
-                						"algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                					}
-                				},
-                				"lastName" : {
-                					"encrypt" : {
-                						"bsonType" : "string",
-                						"algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-                					}
-                				}
-                			}
-                		},
-                		"taxIdentifier" : {
-                			"encrypt" : {
-                				"bsonType" : "string"
-                			}
-                		}
-                	}
-                }
-                        """.formatted(dekUuid);
-        BsonDocument schemaBsonDoc = BsonDocument.parse(schemaJson);
-        return schemaBsonDoc;
-    }
-     */
 
     @Bean
     ClientEncryption clientEncryption() {

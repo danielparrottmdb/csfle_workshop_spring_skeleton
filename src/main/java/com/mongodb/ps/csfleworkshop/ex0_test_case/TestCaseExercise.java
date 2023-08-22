@@ -18,14 +18,25 @@ import com.mongodb.ps.csfleworkshop.ex0_test_case.repositories.EmployeeRepositor
 public class TestCaseExercise implements CsfleExercise {
 	protected static Logger log = LoggerFactory.getLogger(TestCaseExercise.class);
 
+	protected ApplicationContext appContext;
+
+	public TestCaseExercise(ApplicationContext applicationContext) {
+		this.appContext = applicationContext;
+	}
+
 	public EmployeeRepository0 getEmployeeRepository(ApplicationContext appContext) {
 		Repositories repos = new Repositories(appContext);
 		EmployeeRepository0 repo = (EmployeeRepository0) repos.getRepositoryFor(Employee.class).get();
 		return repo;
 	}
 
+	public boolean useAutoEncryption() {
+		return true;
+	}
+
+    //public void runExercise(ApplicationContext appContext) {
     @Override
-    public void runExercise(ApplicationContext appContext) {
+    public void runExercise() {
 		// PUT CODE HERE TO RETRIEVE OUR COMMON (our first) DEK:
 		// Get the DEK UUID for the employee (based on their _id)
 		// Get the employee doc with the right _id

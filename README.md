@@ -30,3 +30,18 @@ A master key is required to wrap the Data Encryption Keys.  If trying this out u
 ```
 dd if=/dev/urandom of=master-key.txt bs=96 count=1
 ```
+
+## Exercises
+
+ 1. Manual Encryption (Slide 79)
+ 2. Manual Decryption (Slide 85)
+ 3. Manual Complete
+ 4. Manual Encryption / Auto Decryption (Slide 101)
+ 5. Auto Encryption (Slide 120)
+ 6. Auto Decryption (Slide 124)
+ 7. Auto Complete
+ 8. Use Case 1 - Create (Slide 137)
+ 9. Use Case 2 - Create (Slide 139)
+ 10. Use Case Delete (Slide 142)
+ 11. Use Case Complete
+

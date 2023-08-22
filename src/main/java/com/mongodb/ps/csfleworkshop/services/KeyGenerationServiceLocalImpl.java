@@ -77,7 +77,7 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
     }
 
     public UUID generateKey() {
-        return this.generateKey("demo-data-key");
+        return this.generateKey("dataKey1");
     }
 
     public UUID generateKey(String keyAltName) {

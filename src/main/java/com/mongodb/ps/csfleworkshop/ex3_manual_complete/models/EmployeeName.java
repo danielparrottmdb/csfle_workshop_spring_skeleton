@@ -1,12 +1,19 @@
-package com.mongodb.ps.csfleworkshop.ex7_use_case_complete.models;
+package com.mongodb.ps.csfleworkshop.ex3_manual_complete.models;
+
+import org.springframework.data.mongodb.core.EncryptionAlgorithms;
+import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
 
 // import org.springframework.data.mongodb.core.mapping.Field;
 
 public class EmployeeName {
 
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Deterministic, keyAltName="dataKey1")
     private String firstName;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Deterministic, keyAltName="dataKey1")
     private String lastName;
+
     // @Field(write=Field.Write.ALWAYS)
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName="dataKey1")
     private String otherNames;
 
     public EmployeeName() {
