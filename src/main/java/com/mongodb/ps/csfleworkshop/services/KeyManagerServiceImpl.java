@@ -13,31 +13,24 @@ import com.mongodb.client.model.vault.DataKeyOptions;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
 
-import org.bson.*;
+import org.bson.BsonBinary;
+import org.bson.BsonBoolean;
+import org.bson.BsonDocument;
+import org.bson.BsonInt32;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.security.SecureRandom;
 import java.util.*;
 
 @Service
-@Qualifier("localKms")
-@Primary
-public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
-    protected static Logger log = LoggerFactory.getLogger(KeyGenerationServiceLocalImpl.class);
-
-    public static final String KMS_PROVIDER = "local";
-    public static final String MASTER_KEY_FILE_PATH = "./master-key.txt";
+public class KeyManagerServiceImpl implements KeyManagerService {
+    protected static Logger log = LoggerFactory.getLogger(KeyManagerServiceImpl.class);
 
     @Value("${spring.data.mongodb.keyvault.uri}")
     public String connectionString;
@@ -46,43 +39,13 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
     @Value("${spring.data.mongodb.keyvault.collection}")
     public String keyVaultColl;
 
-    /**
-     * Generate a local master key. In production scenarios, use a key management
-     * service
-     */
-    public void generateLocalMasterKey() throws IOException {
-        byte[] localMasterKeyWrite = new byte[96];
-        new SecureRandom().nextBytes(localMasterKeyWrite);
-        try (FileOutputStream stream = new FileOutputStream(MASTER_KEY_FILE_PATH)) {
-            stream.write(localMasterKeyWrite);
-        }
+    @Override
+    public UUID generateKey(Map<String, Map<String, Object>> kmsProviders, String kmsProvider) {
+        return this.generateKey(kmsProviders, kmsProvider);
     }
 
-    public Map<String, Map<String, Object>> getKmsProviders() {
-        String kmsProvider = KMS_PROVIDER;
-
-        byte[] localMasterKeyRead = new byte[96];
-
-        try (FileInputStream fis = new FileInputStream(MASTER_KEY_FILE_PATH)) {
-            if (fis.read(localMasterKeyRead) < 96)
-                throw new Exception("Expected to find a file and read 96 bytes from file");
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        Map<String, Object> keyMap = new HashMap<>();
-        keyMap.put("key", localMasterKeyRead);
-
-        Map<String, Map<String, Object>> kmsProviders = new HashMap<>();
-        kmsProviders.put(kmsProvider, keyMap);
-
-        return kmsProviders;
-    }
-
-    public UUID generateKey() {
-        return this.generateKey("dataKey1");
-    }
-
-    public UUID generateKey(String keyAltName) {
+    @Override
+    public UUID generateKey(Map<String, Map<String, Object>> kmsProviders, String kmsProvider, String keyAltName) {
         createIndexOnKeyVaultCollection();
 
         UUID dataKeyId = null;
@@ -106,13 +69,13 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
             ClientEncryptionSettings clientEncryptionSettings = ClientEncryptionSettings.builder()
                     .keyVaultMongoClientSettings(mcs)
                     .keyVaultNamespace(keyVaultNamespace)
-                    .kmsProviders(this.getKmsProviders())
+                    .kmsProviders(kmsProviders)
                     .build();
             ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
             List<String> keyAltNames = new ArrayList<>();
             keyAltNames.add(keyAltName);
             BsonBinary bbDataKeyId = clientEncryption.createDataKey(
-                    KMS_PROVIDER,
+                    kmsProvider,
                     new DataKeyOptions().keyAltNames(keyAltNames));
             dataKeyId = this.toUUID(bbDataKeyId);
             clientEncryption.close();
@@ -122,6 +85,7 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
         return dataKeyId;
     }
 
+    @Override
     public void deleteKey(String keyAltName) {
         MongoClient keyVaultClient = MongoClients.create(connectionString);
         MongoCollection<Document> keyVaultCollection = keyVaultClient.getDatabase(keyVaultDb)
@@ -157,4 +121,5 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
         keyVaultCollection.createIndex(new BsonDocument("keyAltNames", new BsonInt32(1)), indexOpts);
         keyVaultClient.close();
     }
+    
 }
