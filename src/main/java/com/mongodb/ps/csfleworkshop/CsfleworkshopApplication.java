@@ -123,8 +123,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 
         Map<String, Object> extraOptions = new HashMap<String, Object>();
         // For using CRYPT_SHARED:
-        // extraOptions.put("cryptSharedLibPath", CRYPT_SHARED_LIB_PATH);
-        // extraOptions.put("cryptSharedLibRequired", true);
+        extraOptions.put("cryptSharedLibPath", CRYPT_SHARED_LIB_PATH);
+        extraOptions.put("cryptSharedLibRequired", true);
         extraOptions.put("mongocryptdBypassSpawn", true);
 
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;

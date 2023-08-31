@@ -59,5 +59,4 @@ public class KeyGenerationServiceKmipImpl implements KeyGenerationService {
     public UUID generateKey(String keyAltName) {
         return this.keyManager.generateKey(this.getKmsProviders(), KMS_PROVIDER, keyAltName);
     }
-    
 }

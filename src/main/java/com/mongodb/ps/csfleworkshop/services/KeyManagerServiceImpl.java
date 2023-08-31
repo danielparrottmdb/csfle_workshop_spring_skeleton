@@ -41,7 +41,7 @@ public class KeyManagerServiceImpl implements KeyManagerService {
 
     @Override
     public UUID generateKey(Map<String, Map<String, Object>> kmsProviders, String kmsProvider) {
-        return this.generateKey(kmsProviders, kmsProvider);
+        return this.generateKey(kmsProviders, kmsProvider, "dataKey1");
     }
 
     @Override
