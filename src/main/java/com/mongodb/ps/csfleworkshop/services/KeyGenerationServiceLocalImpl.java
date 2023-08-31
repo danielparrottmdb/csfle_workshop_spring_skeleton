@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.io.FileInputStream;
@@ -32,7 +31,6 @@ import java.util.*;
 
 @Service
 @Qualifier("localKms")
-@Primary
 public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
     protected static Logger log = LoggerFactory.getLogger(KeyGenerationServiceLocalImpl.class);
 

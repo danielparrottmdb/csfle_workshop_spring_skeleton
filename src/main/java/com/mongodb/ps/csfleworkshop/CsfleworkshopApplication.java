@@ -77,6 +77,13 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
 
     public static void main(String[] args) {
         log.warn("Here we go... " + args.length);
+
+        // Keystores
+        System.setProperty("javax.net.ssl.keyStore", "/home/ec2-user/keystore.jks");
+        System.setProperty("javax.net.ssl.keyStorePassword", "mongodb");
+        System.setProperty("javax.net.ssl.trustStore", "/home/ec2-user/truststore.jks");
+        System.setProperty("javax.net.ssl.trustStorePassword","mongodb");
+
         for (String arg : args) {
             log.warn("######### Arg: " + arg);
         }

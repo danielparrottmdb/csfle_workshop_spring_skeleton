@@ -7,7 +7,11 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
 
+@Service
+@Primary
 public class KeyGenerationServiceKmipImpl implements KeyGenerationService {
     protected static Logger log = LoggerFactory.getLogger(KeyGenerationServiceKmipImpl.class);
 
@@ -24,16 +28,18 @@ public class KeyGenerationServiceKmipImpl implements KeyGenerationService {
 
     KeyManagerService keyManager;
 
+    public KeyGenerationServiceKmipImpl(KeyManagerService keyManager) {
+        this.keyManager = keyManager;
+    }
+
     @Override
     public Map<String, Map<String, Object>> getKmsProviders() {
         Map<String, Object> kmipMap = new HashMap<String, Object>();
         kmipMap.put("endpoint", kmipEndpoint);
-        // TODO Auto-generated method stub
         Map<String, Map<String, Object>> kmsProviders = new HashMap<>();
         kmsProviders.put(KMS_PROVIDER, kmipMap);
 
         return kmsProviders;
-
     }
 
 
