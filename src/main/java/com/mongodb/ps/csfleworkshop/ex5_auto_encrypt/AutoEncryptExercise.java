@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex7_auto_complete;
+package com.mongodb.ps.csfleworkshop.ex5_auto_encrypt;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -14,23 +14,23 @@ import org.springframework.data.repository.support.Repositories;
 
 import com.github.javafaker.Faker;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.models.Employee;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.models.EmployeeAddress;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
+import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.models.Employee;
+import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.models.EmployeeAddress;
+import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.models.EmployeeName;
+import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.repositories.EmployeeRepository5;
 
-public class AutoCompleteExercise implements CsfleExercise {
-	protected static Logger log = LoggerFactory.getLogger(AutoCompleteExercise.class);
+public class AutoEncryptExercise implements CsfleExercise {
+	protected static Logger log = LoggerFactory.getLogger(AutoEncryptExercise.class);
 
 	protected ApplicationContext appContext;
 
-	public AutoCompleteExercise(ApplicationContext applicationContext) {
+	public AutoEncryptExercise(ApplicationContext applicationContext) {
 		this.appContext = applicationContext;
 	}
 
-	public EmployeeRepository7 getEmployeeRepository(ApplicationContext appContext) {
+	public EmployeeRepository5 getEmployeeRepository(ApplicationContext appContext) {
 		Repositories repos = new Repositories(appContext);
-		EmployeeRepository7 repo = (EmployeeRepository7) repos.getRepositoryFor(Employee.class).get();
+		EmployeeRepository5 repo = (EmployeeRepository5) repos.getRepositoryFor(Employee.class).get();
 		return repo;
 	}
 
@@ -61,15 +61,9 @@ public class AutoCompleteExercise implements CsfleExercise {
 
 
 		// Insert the employee doc
-		EmployeeRepository7 employeeRepository = this.getEmployeeRepository(appContext);
+		EmployeeRepository5 employeeRepository = this.getEmployeeRepository(appContext);
 		ObjectId eId = employeeRepository.insert(e).getId();
 		log.info("eId: " + eId);
-
-		// Find using the deterministically encrypted first and last names
-		// TODO - complete the query parameters and run the query to find the employee.
-		EmployeeName nameQuery = null;
-		Employee e2 = null;
-		log.info("e2: " + e2);
 	}
 
 	/**
@@ -99,44 +93,11 @@ public class AutoCompleteExercise implements CsfleExercise {
 				                        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
 				                    }
 				                },
-				                "lastName" : {
-				                    "encrypt" : {
-				                        "bsonType" : "string",
-				                        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
-				                }
-				                },
-				                "otherNames" : {
-				                    "encrypt" : {
-				                        "bsonType" : "string",
-				                    }
-				                }
+								// TODO! PUT MORE NAME FIELDS IN HERE
+				                
 				            }
 				        },
-				        "address" : {
-				            "encrypt" : {
-				                "bsonType" : "object"
-				            }
-				        },
-				        "dob" : {
-				            "encrypt" : {
-				                "bsonType" : "date"
-				            }
-				        },
-				        "phoneNumber" : {
-				            "encrypt" : {
-				                "bsonType" : "string"
-				            }
-				        },
-				        "salary" : {
-				            "encrypt" : {
-				                "bsonType" : "double"
-				            }
-				        },
-				        "taxIdentifier" : {
-				            "encrypt" : {
-				                "bsonType" : "string"
-				            }
-				        }
+						// TODO! COMPLETE THE REST OF THE SCHEMA MAP
 				    }
 				}
 				        """.formatted(dekUuid);
