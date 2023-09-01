@@ -45,3 +45,6 @@ dd if=/dev/urandom of=master-key.txt bs=96 count=1
  10. Use Case Delete (Slide 142)
  11. Use Case Complete
 
+### TODO
+
+ - review 6 - no failure?

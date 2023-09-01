@@ -66,10 +66,9 @@ public class AutoDecryptExercise implements CsfleExercise {
 		log.info("eId: " + eId);
 
 		// Find using the deterministically encrypted first and last names
-		// Employee e2 = employeeRepository.findById(eId.toString()).get();
-		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
-		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
-		log.info("e2: " + e2);
+		EmployeeName nameQuery = null;
+		Employee e2 = null;
+		log.info("e2: " + e2.toString());
 	}
 
 	/**

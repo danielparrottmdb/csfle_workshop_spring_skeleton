@@ -67,8 +67,8 @@ public class AutoCompleteExercise implements CsfleExercise {
 
 		// Find using the deterministically encrypted first and last names
 		// TODO - complete the query parameters and run the query to find the employee.
-		EmployeeName nameQuery = null;
-		Employee e2 = null;
+		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
+		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
 		log.info("e2: " + e2);
 	}
 
