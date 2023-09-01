@@ -3,24 +3,37 @@ package com.mongodb.ps.csfleworkshop.ex4_manual_complete.client;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bson.BsonBinary;
 import org.bson.BsonDocument;
+import org.bson.BsonValue;
+import org.bson.UuidRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.convert.PropertyValueConverterFactory;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
+import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
+import org.springframework.data.mongodb.core.convert.encryption.MongoEncryptionConverter;
+import org.springframework.data.mongodb.core.encryption.Encryption;
+import org.springframework.data.mongodb.core.encryption.EncryptionKeyResolver;
+import org.springframework.data.mongodb.core.encryption.MongoClientEncryption;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 import com.mongodb.AutoEncryptionSettings;
+import com.mongodb.ClientEncryptionSettings;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import com.mongodb.client.vault.ClientEncryption;
+import com.mongodb.client.vault.ClientEncryptions;
 import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4X;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
@@ -48,9 +61,11 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
     protected static Logger log = LoggerFactory.getLogger(Ex4MongoClientConfiguration.class);
 
     private final KeyGenerationService keyGenerationService;
+	protected ApplicationContext appContext;
 
-    public Ex4MongoClientConfiguration(KeyGenerationService keyGenerationService) {
+    public Ex4MongoClientConfiguration(KeyGenerationService keyGenerationService, ApplicationContext applicationContext) {
         this.keyGenerationService = keyGenerationService;
+        this.appContext = applicationContext;
     }
 
     @Override
@@ -99,5 +114,35 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
     @Bean(name = "ex4MongoTemplate")
     public MongoTemplate mongoTemplate(@Qualifier("ex4MongoDBFactory") MongoDatabaseFactory mongoDatabaseFactory) {
         return new MongoTemplate(mongoDatabaseFactory);
+    }
+
+    @Bean(name = "ex4ClientEncryption")
+    ClientEncryption clientEncryption() {
+        ClientEncryptionSettings encryptionSettings = ClientEncryptionSettings.builder()
+                .keyVaultNamespace(keyVaultDb + "." + keyVaultColl)
+                .kmsProviders(keyGenerationService.getKmsProviders())
+                .keyVaultMongoClientSettings(MongoClientSettings.builder()
+                        .applyConnectionString(new ConnectionString(connectionString))
+                        .uuidRepresentation(UuidRepresentation.STANDARD)
+                        .build())
+                .build();
+
+        return ClientEncryptions.create(encryptionSettings);
+    }
+
+    @Bean(name = "ex4Converter")
+    MongoEncryptionConverter mongoEncrpytionConverter(@Qualifier("ex4ClientEncryption")ClientEncryption clientEncryption) {
+        Encryption<BsonValue, BsonBinary> encryption = MongoClientEncryption.just(clientEncryption);
+        EncryptionKeyResolver keyResolver = EncryptionKeyResolver.annotated((ctx) -> null);
+        return new MongoEncryptionConverter(encryption, keyResolver);
+    }
+
+    /*
+     * 
+     */
+    @Override
+    protected void configureConverters(MongoConverterConfigurationAdapter adapter) {
+        adapter.registerPropertyValueConverterFactory(
+                PropertyValueConverterFactory.beanFactoryAware(appContext));
     }
 }
