@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex11_use_case_complete.models;
+package com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.models;
 
 public class EmployeeAddress {
     private String streetAddress;
@@ -6,6 +6,9 @@ public class EmployeeAddress {
     private String zipPostcode;
     private String stateProvince;
     private String country;
+
+    public EmployeeAddress() {
+    }
 
     public EmployeeAddress(String streetAddress, String suburbCounty, String zipPostcode, String stateProvince,
             String country) {

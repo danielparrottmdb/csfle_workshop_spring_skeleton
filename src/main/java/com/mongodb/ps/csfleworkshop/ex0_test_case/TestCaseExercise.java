@@ -49,7 +49,7 @@ public class TestCaseExercise implements CsfleExercise {
 		ObjectId eId = employeeRepository.insert(e).getId();
 		log.info("eId: " + eId);
 		Employee e2 = employeeRepository.findById(eId.toString()).get();
-		log.info("e2: " + e2 + ";" + e2.getSalary());
+		log.info("e2: " + e2);
     }
 
     @Override

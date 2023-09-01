@@ -1,27 +1,34 @@
-package com.mongodb.ps.csfleworkshop.ex11_use_case_complete.models;
+package com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.models;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.EncryptionAlgorithms;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("employees")
 public class Employee {
 
     @Id
-    private String id;
+    private ObjectId id;
 
     private EmployeeName name;
 
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private EmployeeAddress address;
 
     private List<String> role;
 
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private LocalDate dob;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private String phoneNumber;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private double salary;
 
     @Indexed(unique = true)
@@ -31,9 +38,8 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(String id, EmployeeName name, EmployeeAddress address, List<String> role, LocalDate dob,
+    public Employee(EmployeeName name, EmployeeAddress address, List<String> role, LocalDate dob,
             String phoneNumber, double salary, String taxIdentifier) {
-        this.id = id;
         this.name = name;
         this.address = address;
         this.role = role;
@@ -59,11 +65,11 @@ public class Employee {
         this.address = address;
     }
 
-    public String getId() {
+    public ObjectId getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(ObjectId id) {
         this.id = id;
     }
 

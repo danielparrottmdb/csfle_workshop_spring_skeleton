@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex11_use_case_complete.models;
+package com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.models;
 
 public class EmployeeAddress {
     private String streetAddress;

@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex7_auto_complete;
+package com.mongodb.ps.csfleworkshop.ex6_auto_decrypt;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -14,23 +14,23 @@ import org.springframework.data.repository.support.Repositories;
 
 import com.github.javafaker.Faker;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.models.Employee;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.models.EmployeeAddress;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
+import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.models.Employee;
+import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.models.EmployeeAddress;
+import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.models.EmployeeName;
+import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.repositories.EmployeeRepository6;
 
-public class AutoCompleteExercise implements CsfleExercise {
-	protected static Logger log = LoggerFactory.getLogger(AutoCompleteExercise.class);
+public class AutoDecryptExercise implements CsfleExercise {
+	protected static Logger log = LoggerFactory.getLogger(AutoDecryptExercise.class);
 
 	protected ApplicationContext appContext;
 
-	public AutoCompleteExercise(ApplicationContext applicationContext) {
+	public AutoDecryptExercise(ApplicationContext applicationContext) {
 		this.appContext = applicationContext;
 	}
 
-	public EmployeeRepository7 getEmployeeRepository(ApplicationContext appContext) {
+	public EmployeeRepository6 getEmployeeRepository(ApplicationContext appContext) {
 		Repositories repos = new Repositories(appContext);
-		EmployeeRepository7 repo = (EmployeeRepository7) repos.getRepositoryFor(Employee.class).get();
+		EmployeeRepository6 repo = (EmployeeRepository6) repos.getRepositoryFor(Employee.class).get();
 		return repo;
 	}
 
@@ -61,15 +61,14 @@ public class AutoCompleteExercise implements CsfleExercise {
 
 
 		// Insert the employee doc
-		EmployeeRepository7 employeeRepository = this.getEmployeeRepository(appContext);
+		EmployeeRepository6 employeeRepository = this.getEmployeeRepository(appContext);
 		ObjectId eId = employeeRepository.insert(e).getId();
 		log.info("eId: " + eId);
 
 		// Find using the deterministically encrypted first and last names
-		// TODO - complete the query parameters and run the query to find the employee.
-		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
-		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
-		log.info("e2: " + e2);
+		EmployeeName nameQuery = null;
+		Employee e2 = null;
+		log.info("e2: " + e2.toString());
 	}
 
 	/**

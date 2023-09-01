@@ -25,9 +25,16 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
 import com.mongodb.ps.csfleworkshop.ex0_test_case.TestCaseExercise;
+import com.mongodb.ps.csfleworkshop.ex10_use_case_complete.UseCaseDeleteExercise;
 import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex1_manual_encrypt.ManualEncryptExercise;
+import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.ManualDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex3_manual_complete.ManualCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.AutoEncryptExercise;
+import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.AutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex7_auto_complete.AutoCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex8_use_case_1_create.UseCaseOneCreateExercise;
+import com.mongodb.ps.csfleworkshop.ex9_use_case_2_create.UseCaseTwoCreateExercise;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 import java.util.HashMap;
@@ -47,6 +54,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Autowired
     ApplicationContext appContext;
 
+    // TODO - make sure these values are correct in the application.properties
+    // or mongodb.properties files under src/main/resources/
     @Value("${spring.data.mongodb.keyvault.uri}")
     private String keyVaultConnectionString;
     @Value("${spring.data.mongodb.keyvault.database}")
@@ -63,6 +72,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     @Value("${crypt.shared.lib.path}")
     private String CRYPT_SHARED_LIB_PATH;
 
+    // This can be in properties or at the command line,
+    // e.g.  `mvn spring-boot:run -Dspring-boot.run.arguments=--csfle.exercise=7`
     @Value("${csfle.exercise}")
     private int csfleExerciseNumber;
 
@@ -78,7 +89,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     public static void main(String[] args) {
         log.warn("Here we go... " + args.length);
 
-        // Keystores
+        // TODO - Keystores - make sure these are converted from the .pem and
+        // .cert files and update the location / password as needed
         System.setProperty("javax.net.ssl.keyStore", "/home/ec2-user/keystore.jks");
         System.setProperty("javax.net.ssl.keyStorePassword", "mongodb");
         System.setProperty("javax.net.ssl.trustStore", "/home/ec2-user/truststore.jks");
@@ -96,11 +108,10 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         log.debug("won't log");
 
         CsfleExercise exercise = this.getExercise();
-        //exercise.runExercise(appContext);
         exercise.runExercise();
     }
 
-    // @Override
+    @Override
     public String getDatabaseName() {
         return encryptedDbName;
     }
@@ -121,20 +132,18 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         Map<String, BsonDocument> schemaMap = new HashMap<String, BsonDocument>();
         schemaMap.put(encryptedDbName + "." + encryptedCollName, schema);
 
-        Map<String, Object> extraOptions = new HashMap<String, Object>();
-        // For using CRYPT_SHARED:
-        extraOptions.put("cryptSharedLibPath", CRYPT_SHARED_LIB_PATH);
-        extraOptions.put("cryptSharedLibRequired", true);
-        extraOptions.put("mongocryptdBypassSpawn", true);
-
         String keyVaultNamespace = keyVaultDb + "." + keyVaultColl;
 
         MongoClientSettings.Builder mongoClientSettingsBuilder = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString));
         
-        // MongoClientSettings clientSettings = MongoClientSettings.builder()
-        //         .applyConnectionString(new ConnectionString(connectionString))
         if (exercise.useAutoEncryption()) {
+            Map<String, Object> extraOptions = new HashMap<String, Object>();
+            // For using CRYPT_SHARED:
+            extraOptions.put("cryptSharedLibPath", CRYPT_SHARED_LIB_PATH);
+            extraOptions.put("cryptSharedLibRequired", true);
+            extraOptions.put("mongocryptdBypassSpawn", true);
+
             mongoClientSettingsBuilder.autoEncryptionSettings(AutoEncryptionSettings.builder()
                     .keyVaultMongoClientSettings(MongoClientSettings.builder()
                             .applyConnectionString(new ConnectionString(keyVaultConnectionString))
@@ -158,12 +167,36 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                 case 0:
                     csfleExercise = new TestCaseExercise(appContext);
                     break;
+                case 1:
+                    csfleExercise = new ManualEncryptExercise(appContext);
+                    break;
+                case 2:
+                    csfleExercise = new ManualDecryptExercise(appContext);
+                    break;
                 case 3:
                     csfleExercise = new ManualCompleteExercise(appContext);
                     break;
+                case 4:
+                    throw new UnsupportedOperationException("Manual Encrypt/Auto Decrypt TBD");
+                    // break;
+                case 5:
+                    csfleExercise = new AutoEncryptExercise(appContext);
+                    break;   
+                case 6:
+                    csfleExercise = new AutoDecryptExercise(appContext);
+                    break;   
                 case 7:
                     csfleExercise = new AutoCompleteExercise(appContext);
                     break;   
+                case 8:
+                    csfleExercise = new UseCaseOneCreateExercise(appContext);
+                    break;
+                case 9:
+                    csfleExercise = new UseCaseTwoCreateExercise(appContext);
+                    break;
+                case 10:
+                    csfleExercise = new UseCaseDeleteExercise(appContext);
+                    break;
                 case 11:
                     csfleExercise = new UseCaseCompleteExercise(appContext);
                     break;
