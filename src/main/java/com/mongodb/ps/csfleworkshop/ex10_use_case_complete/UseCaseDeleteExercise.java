@@ -89,7 +89,7 @@ public class UseCaseDeleteExercise implements CsfleExercise {
 
 		//  TODO - PUT CODE HERE TO DELETE THE KEY AND FIND AGAIN
 		Employee e3 = null;
-		log.info("e2: " + e3.getName());
+		log.info("e3: " + e3.getName());
 
 		//  TODO - PUT CODE HERE TO SLEEP FOR 60s AND FIND AGAIN
 
