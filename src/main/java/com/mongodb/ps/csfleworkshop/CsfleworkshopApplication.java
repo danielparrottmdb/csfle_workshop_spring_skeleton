@@ -25,9 +25,16 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
 import com.mongodb.ps.csfleworkshop.ex0_test_case.TestCaseExercise;
+import com.mongodb.ps.csfleworkshop.ex10_use_case_complete.UseCaseDeleteExercise;
 import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex1_manual_encrypt.ManualEncryptExercise;
+import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.ManualDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex3_manual_complete.ManualCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.AutoEncryptExercise;
+import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.AutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex7_auto_complete.AutoCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex8_use_case_1_create.UseCaseOneCreateExercise;
+import com.mongodb.ps.csfleworkshop.ex9_use_case_2_create.UseCaseTwoCreateExercise;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 import java.util.HashMap;
@@ -160,12 +167,36 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                 case 0:
                     csfleExercise = new TestCaseExercise(appContext);
                     break;
+                case 1:
+                    csfleExercise = new ManualEncryptExercise(appContext);
+                    break;
+                case 2:
+                    csfleExercise = new ManualDecryptExercise(appContext);
+                    break;
                 case 3:
                     csfleExercise = new ManualCompleteExercise(appContext);
                     break;
+                case 4:
+                    throw new UnsupportedOperationException("Manual Encrypt/Auto Decrypt TBD");
+                    // break;
+                case 5:
+                    csfleExercise = new AutoEncryptExercise(appContext);
+                    break;   
+                case 6:
+                    csfleExercise = new AutoDecryptExercise(appContext);
+                    break;   
                 case 7:
                     csfleExercise = new AutoCompleteExercise(appContext);
                     break;   
+                case 8:
+                    csfleExercise = new UseCaseOneCreateExercise(appContext);
+                    break;
+                case 9:
+                    csfleExercise = new UseCaseTwoCreateExercise(appContext);
+                    break;
+                case 10:
+                    csfleExercise = new UseCaseDeleteExercise(appContext);
+                    break;
                 case 11:
                     csfleExercise = new UseCaseCompleteExercise(appContext);
                     break;
