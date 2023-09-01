@@ -15,7 +15,7 @@ import com.mongodb.ps.csfleworkshop.CsfleExercise;
 import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.models.Employee;
 import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.models.EmployeeName;
 import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.models.EmployeeAddress;
-import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.repositories.EmployeeRepository3;
+import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.repositories.EmployeeRepository2;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 public class ManualDecryptExercise implements CsfleExercise {
@@ -28,9 +28,9 @@ public class ManualDecryptExercise implements CsfleExercise {
         this.appContext = applicationContext;
     }
 
-	public EmployeeRepository3 getEmployeeRepository(ApplicationContext appContext) {
+	public EmployeeRepository2 getEmployeeRepository(ApplicationContext appContext) {
 		Repositories repos = new Repositories(appContext);
-		EmployeeRepository3 repo = (EmployeeRepository3) repos.getRepositoryFor(Employee.class).get();
+		EmployeeRepository2 repo = (EmployeeRepository2) repos.getRepositoryFor(Employee.class).get();
 		return repo;
 	}
 
@@ -66,7 +66,7 @@ public class ManualDecryptExercise implements CsfleExercise {
 		log.info("dataKey1: " + dataKey1);
 
 		// Insert the employee doc
-		EmployeeRepository3 employeeRepository = this.getEmployeeRepository(appContext);
+		EmployeeRepository2 employeeRepository = this.getEmployeeRepository(appContext);
 		ObjectId eId = employeeRepository.insert(e).getId();
 		log.info("eId: " + eId);
 
