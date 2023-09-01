@@ -17,6 +17,7 @@ import org.bson.BsonBinary;
 import org.bson.BsonBoolean;
 import org.bson.BsonDocument;
 import org.bson.BsonInt32;
+import org.bson.BsonString;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.Binary;
@@ -74,9 +75,16 @@ public class KeyManagerServiceImpl implements KeyManagerService {
             ClientEncryption clientEncryption = ClientEncryptions.create(clientEncryptionSettings);
             List<String> keyAltNames = new ArrayList<>();
             keyAltNames.add(keyAltName);
+
+            String keyId = "1"; // ideally as spring configured param
+            String kmipEndpoint = (String) kmsProviders.get(kmsProvider).get("endpoint");
+            BsonDocument masterKey = new BsonDocument();
+            masterKey.append("keyId", new BsonString(keyId))
+                .append("endpoint", new BsonString(kmipEndpoint));
+
             BsonBinary bbDataKeyId = clientEncryption.createDataKey(
                     kmsProvider,
-                    new DataKeyOptions().keyAltNames(keyAltNames));
+                    new DataKeyOptions().keyAltNames(keyAltNames).masterKey(masterKey));
             dataKeyId = this.toUUID(bbDataKeyId);
             clientEncryption.close();
         }

@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex11_use_case_complete;
+package com.mongodb.ps.csfleworkshop.ex9_use_case_2_create;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -16,24 +16,24 @@ import org.springframework.data.repository.support.Repositories;
 
 import com.github.javafaker.Faker;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
-import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.models.Employee;
-import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.models.EmployeeAddress;
-import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.repositories.EmployeeRepository11;
+import com.mongodb.ps.csfleworkshop.ex9_use_case_2_create.models.Employee;
+import com.mongodb.ps.csfleworkshop.ex9_use_case_2_create.models.EmployeeAddress;
+import com.mongodb.ps.csfleworkshop.ex9_use_case_2_create.models.EmployeeName;
+import com.mongodb.ps.csfleworkshop.ex9_use_case_2_create.repositories.EmployeeRepository9;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
-public class UseCaseCompleteExercise implements CsfleExercise {
-	protected static Logger log = LoggerFactory.getLogger(UseCaseCompleteExercise.class);
+public class UseCaseTwoCreateExercise implements CsfleExercise {
+	protected static Logger log = LoggerFactory.getLogger(UseCaseTwoCreateExercise.class);
 
 	protected ApplicationContext appContext;
 
-	public UseCaseCompleteExercise(ApplicationContext applicationContext) {
+	public UseCaseTwoCreateExercise(ApplicationContext applicationContext) {
 		this.appContext = applicationContext;
 	}
 
-	public EmployeeRepository11 getEmployeeRepository(ApplicationContext appContext) {
+	public EmployeeRepository9 getEmployeeRepository(ApplicationContext appContext) {
 		Repositories repos = new Repositories(appContext);
-		EmployeeRepository11 repo = (EmployeeRepository11) repos.getRepositoryFor(Employee.class).get();
+		EmployeeRepository9 repo = (EmployeeRepository9) repos.getRepositoryFor(Employee.class).get();
 		return repo;
 	}
 
@@ -77,7 +77,7 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 		log.info("employeeDEKId: " + employeeDEKId);
 
 		// Insert the employee doc
-		EmployeeRepository11 employeeRepository = this.getEmployeeRepository(appContext);
+		EmployeeRepository9 employeeRepository = this.getEmployeeRepository(appContext);
 		String eId = employeeRepository.insert(e).getId();
 		log.info("eId: " + eId);
 
@@ -86,31 +86,6 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
 		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
 		log.info("e2: " + e2 + ";" + e2.getSalary());
-
-		// Delete the key and find again - will it work?
-		keyGenerationService.deleteKey(employeeId);
-		e2 = employeeRepository.findByName(nameQuery).get(0);
-		log.info("e2: " + e2.getName() + ";" + e2.getSalary());
-
-		// Now sleep for 60 seconds and find again - will it work this time?
-		try {
-			log.info("Sleeping for 60s.....");
-			Thread.sleep(60 * 1000);
-		} catch (InterruptedException ie) {
-			log.error("Interrupted while sleeping", ie);
-		}
-		log.info("Awake!");
-
-		try {
-			List<Employee> emps = employeeRepository.findByName(nameQuery);
-			if (emps.size() == 0) {
-				log.info("No employee found!");
-			} else {
-				log.info("emps: " + emps);
-			}
-		} catch (PermissionDeniedDataAccessException pddae) {
-			log.error("PDDAE - Error retrieving employee after key deletion (as expected!):", pddae);
-		}
 	}
 
 	/**
@@ -123,11 +98,12 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 	 */
 	@Override
 	public BsonDocument getSchemaDocument(UUID dekUuid) {
+		// TODO - UPDATE SCHEMA  TO USE CORRECT KEYS
 		String schemaJson = """
 				{
 				    "bsonType" : "object",
 				    "encryptMetadata" : {
-				        "keyId": "/_id",
+				        "keyId": // PUT APPROPRIATE CODE OR VARIABLE HERE
 				        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Random"
 				    },
 				    "properties" : {
@@ -136,14 +112,14 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 				            "properties" : {
 				                "firstName" : {
 				                    "encrypt" : {
-				                        "keyId" : [ UUID("%s") ],
+				                        "keyId" : // PUT COMMON KEY UUID HERE
 				                        "bsonType" : "string",
 				                        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
 				                    }
 				                },
 				                "lastName" : {
 				                    "encrypt" : {
-				                        "keyId" : [ UUID("%s") ],
+				                        "keyId" :  // PUT COMMON KEY UUID HERE
 				                        "bsonType" : "string",
 				                        "algorithm" : "AEAD_AES_256_CBC_HMAC_SHA_512-Deterministic",
 				                }
