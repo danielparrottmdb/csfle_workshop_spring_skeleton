@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.convert.PropertyValueConverterFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
@@ -30,6 +31,7 @@ import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExerci
 import com.mongodb.ps.csfleworkshop.ex1_manual_encrypt.ManualEncryptExercise;
 import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.ManualDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex3_manual_complete.ManualCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex4_manual_complete.ManualEncryptAutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.AutoEncryptExercise;
 import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.AutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex7_auto_complete.AutoCompleteExercise;
@@ -116,6 +118,7 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return encryptedDbName;
     }
 
+    @Primary
     @Bean
     public MongoClient mongoClient() {
 
@@ -177,8 +180,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                     csfleExercise = new ManualCompleteExercise(appContext);
                     break;
                 case 4:
-                    throw new UnsupportedOperationException("Manual Encrypt/Auto Decrypt TBD");
-                    // break;
+                    csfleExercise = new ManualEncryptAutoDecryptExercise(appContext);
+                    break;
                 case 5:
                     csfleExercise = new AutoEncryptExercise(appContext);
                     break;   
