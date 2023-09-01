@@ -85,7 +85,7 @@ public class UseCaseTwoCreateExercise implements CsfleExercise {
 		// Employee e2 = employeeRepository.findById(eId.toString()).get();
 		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
 		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
-		log.info("e2: " + e2 + ";" + e2.getSalary());
+		log.info("e2: " + e2);
 	}
 
 	/**

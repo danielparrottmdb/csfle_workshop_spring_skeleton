@@ -85,12 +85,12 @@ public class UseCaseCompleteExercise implements CsfleExercise {
 		// Employee e2 = employeeRepository.findById(eId.toString()).get();
 		EmployeeName nameQuery = new EmployeeName(firstName, lastName);
 		Employee e2 = employeeRepository.findByName(nameQuery).get(0);
-		log.info("e2: " + e2 + ";" + e2.getSalary());
+		log.info("e2: " + e2);
 
 		// Delete the key and find again - will it work?
 		keyGenerationService.deleteKey(employeeId);
 		e2 = employeeRepository.findByName(nameQuery).get(0);
-		log.info("e2: " + e2.getName() + ";" + e2.getSalary());
+		log.info("e2 name: " + e2.getName());
 
 		// Now sleep for 60 seconds and find again - will it work this time?
 		try {
