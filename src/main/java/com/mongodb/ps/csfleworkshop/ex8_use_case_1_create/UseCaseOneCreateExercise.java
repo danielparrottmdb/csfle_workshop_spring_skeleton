@@ -78,16 +78,16 @@ public class UseCaseOneCreateExercise implements CsfleExercise {
 				employeeId,
 				new EmployeeName(firstName, lastName),
 				new EmployeeAddress(
-						"537 White Hills Rd",
-						"Evandale",
-						"7258",
-						"Tasmania",
+						"3 Bson Street",
+						"Mongoville",
+						"3999",
+						"Victoria",
 						"Oz"),
-				Arrays.asList("IC"),
-				LocalDate.of(1989, 1, 1),
-				"+61 400 000 111",
-				78000.0,
-				"Shh it's a secret");
+				Arrays.asList("CIO"),
+				LocalDate.of(1978, 10, 10),
+				"1800MONGO",
+				999999.99,
+				"78SD20NN01");
 
 		// Now make sure an encryption key for the employee exists
 		KeyGenerationServiceKmipImpl keyGenerationService = (KeyGenerationServiceKmipImpl) this.getKeyGenerationService(appContext);

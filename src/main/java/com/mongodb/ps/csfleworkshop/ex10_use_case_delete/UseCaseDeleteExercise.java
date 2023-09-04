@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex10_use_case_complete;
+package com.mongodb.ps.csfleworkshop.ex10_use_case_delete;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -16,10 +16,10 @@ import org.springframework.data.repository.support.Repositories;
 
 import com.github.javafaker.Faker;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
-import com.mongodb.ps.csfleworkshop.ex10_use_case_complete.models.Employee;
-import com.mongodb.ps.csfleworkshop.ex10_use_case_complete.models.EmployeeAddress;
-import com.mongodb.ps.csfleworkshop.ex10_use_case_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex10_use_case_complete.repositories.EmployeeRepository10;
+import com.mongodb.ps.csfleworkshop.ex10_use_case_delete.models.Employee;
+import com.mongodb.ps.csfleworkshop.ex10_use_case_delete.models.EmployeeAddress;
+import com.mongodb.ps.csfleworkshop.ex10_use_case_delete.models.EmployeeName;
+import com.mongodb.ps.csfleworkshop.ex10_use_case_delete.repositories.EmployeeRepository10;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 public class UseCaseDeleteExercise implements CsfleExercise {
@@ -59,16 +59,16 @@ public class UseCaseDeleteExercise implements CsfleExercise {
 				employeeId,
 				new EmployeeName(firstName, lastName),
 				new EmployeeAddress(
-						"537 White Hills Rd",
-						"Evandale",
-						"7258",
-						"Tasmania",
+						"3 Bson Street",
+						"Mongoville",
+						"3999",
+						"Victoria",
 						"Oz"),
-				Arrays.asList("IC"),
-				LocalDate.of(1989, 1, 1),
-				"+61 400 000 111",
-				78000.0,
-				"Shh it's a secret");
+				Arrays.asList("CIO"),
+				LocalDate.of(1978, 10, 10),
+				"1800MONGO",
+				999999.99,
+				"78SD20NN01");
 
 		// Now make sure an encryption key for the employee exists
 		KeyGenerationService keyGenerationService = this.getKeyGenerationService(appContext);

@@ -42,22 +42,20 @@ public class ManualDecryptExercise implements CsfleExercise {
 		// PUT CODE HERE TO RETRIEVE OUR COMMON (our first) DEK:
         // NB - there is a bug in spring-data-mongodb date conversion @ 4.1 so use LocalDate
         // Date dob = new Date(1989, 1, 1);
-        LocalDate dob = LocalDate.of(1989, 1, 1);
+        LocalDate dob = LocalDate.of(1981, 11, 11);
 		Employee e = new Employee(
-				new EmployeeName("Manish", "Engineer"),
+				new EmployeeName("Kuber", "Engineer"),
 				new EmployeeAddress(
-						"537 Bson Rd",
+						"12 Bson Rd",
 						"Mongoville",
-						"7258",
-						"Tasmania",
+						"3999",
+						"Victoria",
 						"Oz"),
-				Arrays.asList("IC"),
-				//ZonedDateTime.of(LocalDate.of(1989, 1, 1), LocalTime.of(0, 0, 0)),
-				//ZonedDate.of(1989, 1, 1),
+				Arrays.asList("DEV"),
 				dob,
 				"1800MONGO",
-				89000.0,
-				"103-443-924");
+				999999.99,
+				"78SDSSNN001");
 
 		// Now make sure an encryption key for the employee exists
 		KeyGenerationService keyGenerationService = this.getKeyGenerationService(appContext);

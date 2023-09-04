@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex10_use_case_complete.models;
+package com.mongodb.ps.csfleworkshop.ex10_use_case_delete.models;
 
 public class EmployeeAddress {
     private String streetAddress;
