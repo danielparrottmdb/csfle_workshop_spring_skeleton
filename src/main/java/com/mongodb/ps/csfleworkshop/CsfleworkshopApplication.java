@@ -10,7 +10,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.convert.PropertyValueConverterFactory;
+
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
 import org.springframework.data.mongodb.core.convert.encryption.MongoEncryptionConverter;
 import org.springframework.data.mongodb.core.encryption.Encryption;
@@ -50,7 +54,12 @@ import org.bson.UuidRepresentation;
 
 import org.slf4j.Logger;
 
+import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+@Primary
 @SpringBootApplication
+@EnableMongoRepositories(basePackageClasses = EmployeeRepository7.class, mongoTemplateRef = "primaryMongoTemplate")
 public class CsfleworkshopApplication extends AbstractMongoClientConfiguration implements CommandLineRunner {
 
     @Autowired
@@ -211,6 +220,7 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return csfleExercise;
     }
 
+    @Primary
     @Bean
     ClientEncryption clientEncryption() {
         ClientEncryptionSettings encryptionSettings = ClientEncryptionSettings.builder()
@@ -225,6 +235,7 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return ClientEncryptions.create(encryptionSettings);
     }
 
+    @Primary
     @Bean
     MongoEncryptionConverter mongoEncrpytionConverter(ClientEncryption clientEncryption) {
         Encryption<BsonValue, BsonBinary> encryption = MongoClientEncryption.just(clientEncryption);
@@ -240,4 +251,19 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         adapter.registerPropertyValueConverterFactory(
                 PropertyValueConverterFactory.beanFactoryAware(appContext));
     }
+
+    @Primary
+    @Bean
+    public MongoDatabaseFactory mongoDatabaseFactory(MongoClient mongoClient) {
+        log.warn("Getting ### PLAIN mongoDatabaseFactory ###");
+        return new SimpleMongoClientDatabaseFactory(mongoClient, this.getDatabaseName());
+    }
+
+    @Primary
+    @Bean(name="primaryMongoTemplate")
+    public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDatabaseFactory) {
+        log.warn("Getting ### PLAIN MongoTemplate ###");
+        return new MongoTemplate(mongoDatabaseFactory);
+    }
+
 }

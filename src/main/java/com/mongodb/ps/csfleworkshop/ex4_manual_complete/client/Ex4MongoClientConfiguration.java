@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.convert.PropertyValueConverterFactory;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
@@ -37,6 +40,8 @@ import com.mongodb.client.vault.ClientEncryptions;
 import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4X;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
+// @Component
+@Configuration
 @EnableMongoRepositories(basePackageClasses = EmployeeRepository4X.class, mongoTemplateRef = "ex4MongoTemplate")
 public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguration {
 
@@ -75,7 +80,7 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
     
     @Bean(name = "ex4MongoClient")
     public MongoClient mongoClient() {
-        log.info("Getting ### ex4MongoClient ###");
+        log.warn("Getting ### ex4MongoClient ###");
 
         // Get blank schema map
         Map<String, BsonDocument> schemaMap = new HashMap<String, BsonDocument>();
@@ -106,18 +111,26 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
         return client;
     }
 
+    // @Primary
+    //@Bean
     @Bean(name = "ex4MongoDBFactory")
     public MongoDatabaseFactory mongoDatabaseFactory(@Qualifier("ex4MongoClient") MongoClient mongoClient) {
+        log.warn("Getting ### ex4MongoDBFactory ###");
         return new SimpleMongoClientDatabaseFactory(mongoClient, this.getDatabaseName());
     }
 
+    // @Primary
+    //public MongoTemplate mongoTemplate(@Qualifier(value="ex4MongoDBFactory") MongoDatabaseFactory mongoDatabaseFactory) {
     @Bean(name = "ex4MongoTemplate")
-    public MongoTemplate mongoTemplate(@Qualifier("ex4MongoDBFactory") MongoDatabaseFactory mongoDatabaseFactory) {
+    public MongoTemplate mongoTemplate(@Qualifier(value="ex4MongoDBFactory") MongoDatabaseFactory mongoDatabaseFactory) {
+        log.warn("Getting ### ex4MongoTemplate ###");
         return new MongoTemplate(mongoDatabaseFactory);
     }
 
+    // @Primary
     @Bean(name = "ex4ClientEncryption")
     ClientEncryption clientEncryption() {
+        log.warn("Getting ### ex4ClientEncryption ###");
         ClientEncryptionSettings encryptionSettings = ClientEncryptionSettings.builder()
                 .keyVaultNamespace(keyVaultDb + "." + keyVaultColl)
                 .kmsProviders(keyGenerationService.getKmsProviders())
@@ -130,8 +143,10 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
         return ClientEncryptions.create(encryptionSettings);
     }
 
+    // @Primary
     @Bean(name = "ex4Converter")
-    MongoEncryptionConverter mongoEncrpytionConverter(@Qualifier("ex4ClientEncryption")ClientEncryption clientEncryption) {
+    MongoEncryptionConverter mongoEncryptionConverter(@Qualifier("ex4ClientEncryption")ClientEncryption clientEncryption) {
+        log.warn("Getting ### ex4Converter ###");
         Encryption<BsonValue, BsonBinary> encryption = MongoClientEncryption.just(clientEncryption);
         EncryptionKeyResolver keyResolver = EncryptionKeyResolver.annotated((ctx) -> null);
         return new MongoEncryptionConverter(encryption, keyResolver);
@@ -142,6 +157,9 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
      */
     @Override
     protected void configureConverters(MongoConverterConfigurationAdapter adapter) {
+        log.warn("### Ex4 Configuring Converters ###");
+        // Need different type of converter....
+        // adapter.registerConverter(this.mongoEncryptionConverter(this.clientEncryption()));
         adapter.registerPropertyValueConverterFactory(
                 PropertyValueConverterFactory.beanFactoryAware(appContext));
     }
