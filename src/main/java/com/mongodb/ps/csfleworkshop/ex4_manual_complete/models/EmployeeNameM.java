@@ -1,20 +1,26 @@
 package com.mongodb.ps.csfleworkshop.ex4_manual_complete.models;
 
-public class EmployeeNameX {
+import org.springframework.data.mongodb.core.EncryptionAlgorithms;
+import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
 
+public class EmployeeNameM {
+
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Deterministic, keyAltName="dataKey1")
     private String firstName;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Deterministic, keyAltName="dataKey1")
     private String lastName;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName="dataKey1")
     private String otherNames;
 
-    public EmployeeNameX() {
+    public EmployeeNameM() {
     }
 
-    public EmployeeNameX(String firstName, String lastName) {
+    public EmployeeNameM(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public EmployeeNameX(String firstName, String lastName, String otherNames) {
+    public EmployeeNameM(String firstName, String lastName, String otherNames) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.otherNames = otherNames;

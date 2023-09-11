@@ -37,12 +37,12 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4X;
+import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4M;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 // @Component
 @Configuration
-@EnableMongoRepositories(basePackageClasses = EmployeeRepository4X.class, mongoTemplateRef = "ex4MongoTemplate")
+@EnableMongoRepositories(basePackageClasses = EmployeeRepository4M.class, mongoTemplateRef = "ex4MongoTemplate")
 public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguration {
 
     // TODO - make sure these values are correct in the application.properties
@@ -90,22 +90,6 @@ public class Ex4MongoClientConfiguration extends AbstractMongoClientConfiguratio
         MongoClientSettings.Builder mongoClientSettingsBuilder = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString));
         
-        Map<String, Object> extraOptions = new HashMap<String, Object>();
-        // For using CRYPT_SHARED:
-        extraOptions.put("cryptSharedLibPath", CRYPT_SHARED_LIB_PATH);
-        extraOptions.put("cryptSharedLibRequired", true);
-        extraOptions.put("mongocryptdBypassSpawn", true);
-
-        mongoClientSettingsBuilder.autoEncryptionSettings(AutoEncryptionSettings.builder()
-                .keyVaultMongoClientSettings(MongoClientSettings.builder()
-                        .applyConnectionString(new ConnectionString(keyVaultConnectionString))
-                        .build())
-                .keyVaultNamespace(keyVaultNamespace)
-                .kmsProviders(keyGenerationService.getKmsProviders())
-                .schemaMap(schemaMap)
-                .extraOptions(extraOptions)
-                .build());
-
         MongoClientSettings clientSettings = mongoClientSettingsBuilder.build();
         MongoClient client = MongoClients.create(clientSettings);
         return client;

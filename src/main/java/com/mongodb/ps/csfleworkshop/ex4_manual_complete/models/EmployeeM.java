@@ -7,26 +7,39 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import org.springframework.data.mongodb.core.EncryptionAlgorithms;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
+import org.springframework.data.mongodb.core.mapping.Field;
+
 @Document("employees")
-public class EmployeeX {
+public class EmployeeM {
 
     @Id
     private ObjectId id;
 
-    private EmployeeNameX name;
+    private EmployeeNameM name;
+
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private EmployeeAddress address;
+
     private List<String> role;
 
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private LocalDate dob;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private String phoneNumber;
+    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private double salary;
 
+    @Indexed(unique = true)
+    @Field
     private String taxIdentifier;
 
-    public EmployeeX() {
+    public EmployeeM() {
     }
 
-    public EmployeeX(EmployeeNameX name, EmployeeAddress address, List<String> role, LocalDate dob,
+    public EmployeeM(EmployeeNameM name, EmployeeAddress address, List<String> role, LocalDate dob,
             String phoneNumber, double salary, String taxIdentifier) {
         this.name = name;
         this.address = address;
@@ -37,11 +50,11 @@ public class EmployeeX {
         this.taxIdentifier = taxIdentifier;
     }
 
-    public EmployeeNameX getName() {
+    public EmployeeNameM getName() {
         return name;
     }
 
-    public void setName(EmployeeNameX name) {
+    public void setName(EmployeeNameM name) {
         this.name = name;
     }
 

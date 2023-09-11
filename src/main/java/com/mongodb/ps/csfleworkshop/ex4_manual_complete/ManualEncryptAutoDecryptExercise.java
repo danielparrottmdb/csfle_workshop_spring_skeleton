@@ -15,11 +15,11 @@ import org.springframework.data.repository.support.Repositories;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
 import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.Employee;
 import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeNameX;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeX;
+import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeNameM;
+import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeM;
 import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeAddress;
 import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4X;
+import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4M;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
@@ -38,9 +38,9 @@ public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
         return repo;
     }
 
-    public EmployeeRepository4X getEmployeeXRepository(ApplicationContext appContext) {
+    public EmployeeRepository4M getEmployeeMRepository(ApplicationContext appContext) {
         Repositories repos = new Repositories(appContext);
-        EmployeeRepository4X repo = (EmployeeRepository4X) repos.getRepositoryFor(EmployeeX.class).get();
+        EmployeeRepository4M repo = (EmployeeRepository4M) repos.getRepositoryFor(EmployeeM.class).get();
         return repo;
     }
     public KeyGenerationService getKeyGenerationService(ApplicationContext applicationContext) {
@@ -51,8 +51,8 @@ public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
         // NB - there is a bug in spring-data-mongodb date conversion @ 4.1 so use LocalDate
         //Date dob = new Date(1989, 1, 1);
         LocalDate dob = LocalDate.of(1989, 1, 1);
-        Employee e = new Employee(
-                new EmployeeName("Manish", "Engineer"),
+        EmployeeM e = new EmployeeM(
+                new EmployeeNameM("Manish", "Engineer"),
                 new EmployeeAddress(
                         "537 Bson Rd",
                         "Mongoville",
@@ -69,17 +69,17 @@ public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
 
         // Now make sure an encryption key for the employee exists
 
-        // Insert the employee doc
-        EmployeeRepository4 employeeRepository = this.getEmployeeRepository(appContext);
-        ObjectId eId = employeeRepository.insert(e).getId();
+        // Insert the employee doc using manual encryption
+        EmployeeRepository4M employeeRepositoryMan = this.getEmployeeMRepository(appContext);
+        ObjectId eId = employeeRepositoryMan.insert(e).getId();
         log.info("eId: " + eId);
 
         // Find using the deterministically encrypted first and last names
-        EmployeeRepository4X employeeRepositoryX = this.getEmployeeXRepository(appContext);
+        EmployeeRepository4 employeeRepositoryAuto = this.getEmployeeRepository(appContext);
         // EmployeeName nameQuery = new EmployeeName("Manish", "Engineer");
         // EmployeeX e2 = employeeRepositoryX.findByName(nameQuery).get(0);
-        EmployeeX e2 = employeeRepositoryX.findById(eId.toString()).get();
-        log.info("e2: " + e2);
+        Employee eAuto = employeeRepositoryAuto.findById(eId.toString()).get();
+        log.info("eAuto: " + eAuto);
 
     }
     public BsonDocument getSchemaDocument(UUID dekUuid) {
@@ -87,7 +87,7 @@ public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
     }
 
     public boolean useAutoEncryption() {
-        return false;
+        return true;
     }
 }
 
