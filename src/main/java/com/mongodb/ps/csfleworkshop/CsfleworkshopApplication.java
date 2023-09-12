@@ -8,13 +8,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
 import org.springframework.data.convert.PropertyValueConverterFactory;
 
-import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
 import org.springframework.data.mongodb.core.convert.encryption.MongoEncryptionConverter;
 import org.springframework.data.mongodb.core.encryption.Encryption;
@@ -248,17 +244,4 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         adapter.registerPropertyValueConverterFactory(
                 PropertyValueConverterFactory.beanFactoryAware(appContext));
     }
-
-    @Bean
-    public MongoDatabaseFactory mongoDatabaseFactory(MongoClient mongoClient) {
-        log.warn("Getting ### PLAIN mongoDatabaseFactory ###");
-        return new SimpleMongoClientDatabaseFactory(mongoClient, this.getDatabaseName());
-    }
-
-    @Bean
-    public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDatabaseFactory) {
-        log.warn("Getting ### PLAIN MongoTemplate ###");
-        return new MongoTemplate(mongoDatabaseFactory);
-    }
-
 }
