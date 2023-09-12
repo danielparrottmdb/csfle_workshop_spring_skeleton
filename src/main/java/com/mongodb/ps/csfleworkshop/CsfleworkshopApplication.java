@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.convert.PropertyValueConverterFactory;
+
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions.MongoConverterConfigurationAdapter;
 import org.springframework.data.mongodb.core.convert.encryption.MongoEncryptionConverter;
@@ -30,6 +31,7 @@ import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExerci
 import com.mongodb.ps.csfleworkshop.ex1_manual_encrypt.ManualEncryptExercise;
 import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.ManualDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex3_manual_complete.ManualCompleteExercise;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.ManualEncryptAutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.AutoEncryptExercise;
 import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.AutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex7_auto_complete.AutoCompleteExercise;
@@ -47,6 +49,11 @@ import org.bson.BsonValue;
 import org.bson.UuidRepresentation;
 
 import org.slf4j.Logger;
+
+//import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
+//import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+
+// @EnableMongoRepositories(basePackageClasses = EmployeeRepository7.class, mongoTemplateRef = "primaryMongoTemplate")
 
 @SpringBootApplication
 public class CsfleworkshopApplication extends AbstractMongoClientConfiguration implements CommandLineRunner {
@@ -177,8 +184,8 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                     csfleExercise = new ManualCompleteExercise(appContext);
                     break;
                 case 4:
-                    throw new UnsupportedOperationException("Manual Encrypt/Auto Decrypt TBD");
-                    // break;
+                    csfleExercise = new ManualEncryptAutoDecryptExercise(appContext, this.clientEncryption());
+                    break;
                 case 5:
                     csfleExercise = new AutoEncryptExercise(appContext);
                     break;   
