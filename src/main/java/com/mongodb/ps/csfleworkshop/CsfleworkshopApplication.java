@@ -54,12 +54,12 @@ import org.bson.UuidRepresentation;
 
 import org.slf4j.Logger;
 
-import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+//import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
+//import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
-@Primary
+// @EnableMongoRepositories(basePackageClasses = EmployeeRepository7.class, mongoTemplateRef = "primaryMongoTemplate")
+
 @SpringBootApplication
-@EnableMongoRepositories(basePackageClasses = EmployeeRepository7.class, mongoTemplateRef = "primaryMongoTemplate")
 public class CsfleworkshopApplication extends AbstractMongoClientConfiguration implements CommandLineRunner {
 
     @Autowired
@@ -127,7 +127,6 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return encryptedDbName;
     }
 
-    @Primary
     @Bean
     public MongoClient mongoClient() {
 
@@ -189,7 +188,7 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                     csfleExercise = new ManualCompleteExercise(appContext);
                     break;
                 case 4:
-                    csfleExercise = new ManualEncryptAutoDecryptExercise(appContext);
+                    csfleExercise = new ManualEncryptAutoDecryptExercise(appContext, this.clientEncryption());
                     break;
                 case 5:
                     csfleExercise = new AutoEncryptExercise(appContext);
@@ -220,7 +219,6 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return csfleExercise;
     }
 
-    @Primary
     @Bean
     ClientEncryption clientEncryption() {
         ClientEncryptionSettings encryptionSettings = ClientEncryptionSettings.builder()
@@ -235,7 +233,6 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
         return ClientEncryptions.create(encryptionSettings);
     }
 
-    @Primary
     @Bean
     MongoEncryptionConverter mongoEncrpytionConverter(ClientEncryption clientEncryption) {
         Encryption<BsonValue, BsonBinary> encryption = MongoClientEncryption.just(clientEncryption);
@@ -252,15 +249,13 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
                 PropertyValueConverterFactory.beanFactoryAware(appContext));
     }
 
-    @Primary
     @Bean
     public MongoDatabaseFactory mongoDatabaseFactory(MongoClient mongoClient) {
         log.warn("Getting ### PLAIN mongoDatabaseFactory ###");
         return new SimpleMongoClientDatabaseFactory(mongoClient, this.getDatabaseName());
     }
 
-    @Primary
-    @Bean(name="primaryMongoTemplate")
+    @Bean
     public MongoTemplate mongoTemplate(MongoDatabaseFactory mongoDatabaseFactory) {
         log.warn("Getting ### PLAIN MongoTemplate ###");
         return new MongoTemplate(mongoDatabaseFactory);

@@ -7,9 +7,7 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import org.springframework.data.mongodb.core.EncryptionAlgorithms;
 import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document("employees")
@@ -20,16 +18,12 @@ public class EmployeeM {
 
     private EmployeeNameM name;
 
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private EmployeeAddress address;
 
     private List<String> role;
 
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private LocalDate dob;
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private String phoneNumber;
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName = "dataKey1")
     private double salary;
 
     @Indexed(unique = true)

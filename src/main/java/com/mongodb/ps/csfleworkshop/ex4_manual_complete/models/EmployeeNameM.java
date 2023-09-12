@@ -1,52 +1,48 @@
 package com.mongodb.ps.csfleworkshop.ex4_manual_complete.models;
 
-import org.springframework.data.mongodb.core.EncryptionAlgorithms;
-import org.springframework.data.mongodb.core.mapping.ExplicitEncrypted;
+import org.bson.BsonBinary;
 
 public class EmployeeNameM {
 
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Deterministic, keyAltName="dataKey1")
-    private String firstName;
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Deterministic, keyAltName="dataKey1")
-    private String lastName;
-    @ExplicitEncrypted(algorithm = EncryptionAlgorithms.AEAD_AES_256_CBC_HMAC_SHA_512_Random, keyAltName="dataKey1")
-    private String otherNames;
+    private BsonBinary firstName;
+    private BsonBinary lastName;
+    private BsonBinary otherNames;
 
     public EmployeeNameM() {
     }
 
-    public EmployeeNameM(String firstName, String lastName) {
+    public EmployeeNameM(BsonBinary firstName, BsonBinary lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public EmployeeNameM(String firstName, String lastName, String otherNames) {
+    public EmployeeNameM(BsonBinary firstName, BsonBinary lastName, BsonBinary otherNames) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.otherNames = otherNames;
     }
 
-    public String getFirstName() {
+    public BsonBinary getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(BsonBinary firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    public BsonBinary getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(BsonBinary lastName) {
         this.lastName = lastName;
     }
 
-    public String getOtherNames() {
+    public BsonBinary getOtherNames() {
         return otherNames;
     }
 
-    public void setOtherNames(String otherNames) {
+    public void setOtherNames(BsonBinary otherNames) {
         this.otherNames = otherNames;
     }
 
