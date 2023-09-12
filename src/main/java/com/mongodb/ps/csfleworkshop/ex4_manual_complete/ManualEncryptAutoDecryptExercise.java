@@ -96,7 +96,7 @@ public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
 
     }
     public BsonDocument getSchemaDocument(UUID dekUuid) {
-        return null;
+        return new BsonDocument();
     }
 
     public boolean useAutoEncryption() {
