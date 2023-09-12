@@ -31,7 +31,7 @@ import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExerci
 import com.mongodb.ps.csfleworkshop.ex1_manual_encrypt.ManualEncryptExercise;
 import com.mongodb.ps.csfleworkshop.ex2_manual_decrypt.ManualDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex3_manual_complete.ManualCompleteExercise;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.ManualEncryptAutoDecryptExercise;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.ManualEncryptAutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex5_auto_encrypt.AutoEncryptExercise;
 import com.mongodb.ps.csfleworkshop.ex6_auto_decrypt.AutoDecryptExercise;
 import com.mongodb.ps.csfleworkshop.ex7_auto_complete.AutoCompleteExercise;

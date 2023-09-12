@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex4_manual_complete;
+package com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -18,13 +18,13 @@ import org.springframework.data.repository.support.Repositories;
 import com.mongodb.client.model.vault.EncryptOptions;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.ps.csfleworkshop.CsfleExercise;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.Employee;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeName;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeNameM;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeM;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.models.EmployeeAddress;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4;
-import com.mongodb.ps.csfleworkshop.ex4_manual_complete.repositories.EmployeeRepository4M;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.models.Employee;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.models.EmployeeAddress;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.models.EmployeeM;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.models.EmployeeName;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.models.EmployeeNameM;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.repositories.EmployeeRepository4;
+import com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.repositories.EmployeeRepository4M;
 import com.mongodb.ps.csfleworkshop.services.KeyGenerationService;
 
 public class ManualEncryptAutoDecryptExercise implements CsfleExercise {

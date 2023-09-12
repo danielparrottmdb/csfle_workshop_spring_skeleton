@@ -1,4 +1,4 @@
-package com.mongodb.ps.csfleworkshop.ex4_manual_complete.models;
+package com.mongodb.ps.csfleworkshop.ex4_manual_encrypt_auto_decrypt.models;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,16 +7,13 @@ import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import org.springframework.data.mongodb.core.index.Indexed;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 @Document("employees")
-public class EmployeeM {
+public class Employee {
 
     @Id
     private ObjectId id;
 
-    private EmployeeNameM name;
+    private EmployeeName name;
 
     private EmployeeAddress address;
 
@@ -26,14 +23,12 @@ public class EmployeeM {
     private String phoneNumber;
     private double salary;
 
-    @Indexed(unique = true)
-    @Field
     private String taxIdentifier;
 
-    public EmployeeM() {
+    public Employee() {
     }
 
-    public EmployeeM(EmployeeNameM name, EmployeeAddress address, List<String> role, LocalDate dob,
+    public Employee(EmployeeName name, EmployeeAddress address, List<String> role, LocalDate dob,
             String phoneNumber, double salary, String taxIdentifier) {
         this.name = name;
         this.address = address;
@@ -44,11 +39,11 @@ public class EmployeeM {
         this.taxIdentifier = taxIdentifier;
     }
 
-    public EmployeeNameM getName() {
+    public EmployeeName getName() {
         return name;
     }
 
-    public void setName(EmployeeNameM name) {
+    public void setName(EmployeeName name) {
         this.name = name;
     }
 
