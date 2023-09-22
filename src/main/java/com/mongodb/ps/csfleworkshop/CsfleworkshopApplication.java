@@ -25,7 +25,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.vault.ClientEncryption;
 import com.mongodb.client.vault.ClientEncryptions;
-import com.mongodb.ps.csfleworkshop.ex0_test_case.TestCaseExercise;
 import com.mongodb.ps.csfleworkshop.ex10_use_case_delete.UseCaseDeleteExercise;
 import com.mongodb.ps.csfleworkshop.ex11_use_case_complete.UseCaseCompleteExercise;
 import com.mongodb.ps.csfleworkshop.ex1_manual_encrypt.ManualEncryptExercise;
@@ -171,9 +170,6 @@ public class CsfleworkshopApplication extends AbstractMongoClientConfiguration i
     public CsfleExercise getExercise() {
         if (csfleExercise == null) {
             switch (csfleExerciseNumber) {
-                case 0:
-                    csfleExercise = new TestCaseExercise(appContext);
-                    break;
                 case 1:
                     csfleExercise = new ManualEncryptExercise(appContext);
                     break;
