@@ -144,8 +144,6 @@ public class KeyGenerationServiceLocalImpl implements KeyGenerationService {
 
     private void createIndexOnKeyVaultCollection() {
         MongoClient keyVaultClient = MongoClients.create(connectionString);
-        // keyVaultClient.getDatabase(KEY_VAULT_DB).getCollection(KEY_VAULT_COLL).drop();
-        // keyVaultClient.getDatabase(<<DB Name>>).getCollection(<<Collection>>).drop();
         MongoCollection<Document> keyVaultCollection = keyVaultClient.getDatabase(keyVaultDb)
                 .getCollection(keyVaultColl);
         IndexOptions indexOpts = new IndexOptions()

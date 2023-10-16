@@ -90,8 +90,8 @@ public class ManualEncryptAutoDecryptExercise implements CsfleExercise {
         // Find using the deterministically encrypted first and last names
         EmployeeRepository4 employeeRepositoryAuto = this.getEmployeeRepository(appContext);
         // EmployeeName nameQuery = new EmployeeName("Manish", "Engineer");
-        // EmployeeX e2 = employeeRepositoryX.findByName(nameQuery).get(0);
-        Employee eAuto = employeeRepositoryAuto.findById(eId.toString()).get();
+        Employee eAuto  = employeeRepositoryAuto.findEncryptedNames(encrFirstName, encrLastName).get(0);
+        // Employee eAuto = employeeRepositoryAuto.findById(eId.toString()).get();
         log.info("eAuto: " + eAuto);
 
     }

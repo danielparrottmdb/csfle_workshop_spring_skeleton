@@ -1,12 +1,9 @@
 package com.mongodb.ps.csfleworkshop.ex10_use_case_delete.models;
 
-// import org.springframework.data.mongodb.core.mapping.Field;
-
 public class EmployeeName {
 
     private String firstName;
     private String lastName;
-    // @Field(write=Field.Write.ALWAYS)
     private String otherNames;
 
     public EmployeeName() {
