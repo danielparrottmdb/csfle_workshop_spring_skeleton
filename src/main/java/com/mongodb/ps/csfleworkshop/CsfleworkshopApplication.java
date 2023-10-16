@@ -49,10 +49,6 @@ import org.bson.UuidRepresentation;
 
 import org.slf4j.Logger;
 
-//import com.mongodb.ps.csfleworkshop.ex7_auto_complete.repositories.EmployeeRepository7;
-//import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-// @EnableMongoRepositories(basePackageClasses = EmployeeRepository7.class, mongoTemplateRef = "primaryMongoTemplate")
 
 @SpringBootApplication
 public class CsfleworkshopApplication extends AbstractMongoClientConfiguration implements CommandLineRunner {
