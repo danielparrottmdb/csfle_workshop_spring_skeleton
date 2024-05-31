@@ -19,12 +19,13 @@ public class Employee {
 
     private EmployeeName name;
 
-    // TODO - Use annotations to flag fields for manual
-    // encryption.  Make sure the key and algorithm are set!
     private EmployeeAddress address;
 
     private List<String> role;
 
+    // TODO - Use annotations to flag these fields for manual
+    // encryption with the random algorithm.  Make sure the key and algorithm
+    // are set!
     private LocalDate dob;
     private String phoneNumber;
     private double salary;
